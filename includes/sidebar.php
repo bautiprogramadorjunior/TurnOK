@@ -4,7 +4,7 @@ declare(strict_types=1);
 $navItems = [
     ['key' => 'dashboard', 'label' => 'Panel principal', 'href' => 'dashboard.php', 'icon' => 'home', 'show' => true],
     ['key' => 'tramites', 'label' => 'Trámites', 'href' => 'tramites.php', 'icon' => 'file', 'show' => !is_space_manager_only() && has_any_role(['Alumno', 'Profesor', 'Directivo'])],
-    ['key' => 'espacios', 'label' => 'Espacios', 'href' => 'espacios.php', 'icon' => 'building', 'show' => !has_cargo('Preceptor') && (has_role('Profesor') || has_cargo('Encargado de Espacio') || can_manage_institution())],
+    ['key' => 'espacios', 'label' => 'Espacios', 'href' => 'espacios.php', 'icon' => 'building', 'show' => !has_cargo('Preceptor') && (has_role('Profesor') || has_cargo('Encargado de Espacio') || can_manage_users())],
     ['key' => 'reuniones', 'label' => 'Reuniones', 'href' => 'reuniones.php', 'icon' => 'calendar', 'show' => !is_space_manager_only() && has_any_role(['Alumno', 'Profesor', 'Directivo'])],
     ['key' => 'preceptoria', 'label' => 'Preceptoría', 'href' => 'preceptoria.php', 'icon' => 'users', 'show' => !is_space_manager_only() && has_cargo('Preceptor')],
     ['key' => 'notificaciones', 'label' => 'Notificaciones', 'href' => 'notificaciones.php', 'icon' => 'bell', 'show' => true],

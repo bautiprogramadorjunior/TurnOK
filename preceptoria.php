@@ -251,9 +251,10 @@ require __DIR__ . '/includes/header.php';
 </section>
 
 <form class="filter-bar" method="get">
-    <label class="form-group" for="attendanceDate"><span>Fecha para asistencia</span><input class="input-control" id="attendanceDate" type="date" name="fecha" value="<?= e($selectedDate) ?>" max="<?= e(date('Y-m-d')) ?>"></label>
-    <button class="btn" type="submit">Ver fecha</button>
+    <label class="form-group" for="attendanceDate"><span>Consultar asistencia guardada por fecha</span><input class="input-control" id="attendanceDate" type="date" name="fecha" value="<?= e($selectedDate) ?>" max="<?= e(date('Y-m-d')) ?>"></label>
+    <button class="btn" type="submit">Ver asistencia</button>
 </form>
+<p class="muted">Elegí una fecha para consultar los estados guardados de tus cursos. Si necesitás corregirlos, cambialos en la lista y guardá nuevamente.</p>
 
 <?php if (!$courses): ?>
     <section class="empty-state">
@@ -271,7 +272,7 @@ require __DIR__ . '/includes/header.php';
                 </div>
             </header>
             <div class="panel-body">
-                <h4>Asistencia · <?= e(format_date($selectedDate)) ?></h4>
+                <h4>Asistencia guardada · <?= e(format_date($selectedDate)) ?></h4>
                 <?php if (!$course['students']): ?>
                     <p class="muted">Todavía no hay alumnos activos inscriptos en este curso para el ciclo lectivo actual.</p>
                 <?php else: ?>
@@ -305,14 +306,14 @@ require __DIR__ . '/includes/header.php';
                     </form>
 
                     <div class="section-divider"></div>
-                    <h4>Observaciones de seguimiento</h4>
+                    <h4>Historial de observaciones de seguimiento</h4>
                     <p class="muted">Cada curso tiene un solo preceptor. Las observaciones solo las puede consultar la persona actualmente asignada a este curso.</p>
                     <?php foreach ($course['students'] as $studentId => $student): ?>
                         <?php $studentObservations = $course['observations'][$studentId] ?? []; ?>
                         <details class="panel" style="margin:10px 0">
                             <summary class="panel-header" style="cursor:pointer">
                                 <strong><?= e($student['alumno_apellido'] . ', ' . $student['alumno_nombre']) ?></strong>
-                                <span class="muted"><?= count($studentObservations) ?> observaciones recientes</span>
+                                <span class="muted">Ver historial y agregar observación · <?= count($studentObservations) ?> recientes</span>
                             </summary>
                             <div class="panel-body">
                                 <form method="post">
@@ -328,6 +329,7 @@ require __DIR__ . '/includes/header.php';
                                 </form>
                                 <?php if ($studentObservations): ?>
                                     <div class="section-divider"></div>
+                                    <p class="muted">Se muestran las últimas <?= min(5, count($studentObservations)) ?> observaciones guardadas.</p>
                                     <?php foreach (array_slice($studentObservations, 0, 5) as $observation): ?>
                                         <article class="list-item">
                                             <div class="list-copy"><p><?= nl2br(e($observation['observacion'])) ?></p><small class="muted"><?= e(format_date($observation['created_at'], true)) ?></small></div>

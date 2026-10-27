@@ -5,7 +5,7 @@ $user = require_login();
 $pdo = db();
 $userId = (int) $user['id'];
 $isProfessor = !has_cargo('Preceptor') && has_role('Profesor');
-$isManager = can_manage_institution();
+$isManager = can_manage_users();
 $isAssignedManager = has_cargo('Encargado de Espacio');
 
 if (!$isProfessor && !$isManager && !$isAssignedManager) {
@@ -13,7 +13,7 @@ if (!$isProfessor && !$isManager && !$isAssignedManager) {
     $pageTitle = 'Espacios';
     $activePage = 'espacios';
     require __DIR__ . '/includes/header.php';
-    echo '<section class="empty-state"><div class="empty-icon">' . icon('x', 32) . '</div><h2>Acceso restringido</h2><p>Las reservas de espacios están disponibles para profesores y encargados.</p></section>';
+    echo '<section class="empty-state"><div class="empty-icon">' . icon('x', 32) . '</div><h2>Acceso restringido</h2><p>Las reservas están disponibles para profesores, encargados de espacio y el Rector.</p></section>';
     require __DIR__ . '/includes/footer.php';
     exit;
 }

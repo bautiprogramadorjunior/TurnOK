@@ -8,7 +8,7 @@ $isManager = can_manage_institution();
 $isSpaceManagerOnly = is_space_manager_only();
 $isPreceptor = has_cargo('Preceptor');
 $isProfessor = !$isSpaceManagerOnly && !$isPreceptor && has_role('Profesor');
-$isSpaceManager = has_cargo('Encargado de Espacio') || $isManager;
+$isSpaceManager = has_cargo('Encargado de Espacio') || can_manage_users();
 
 function scalar_query(PDO $pdo, string $sql, array $params = []): int
 {
@@ -27,7 +27,7 @@ if (!$isSpaceManagerOnly && !$isPreceptor) {
 if ($isPreceptor) {
     $spacesCount = 0;
 } elseif ($isSpaceManager) {
-    if ($isManager) {
+    if (can_manage_users()) {
         $spacesCount = scalar_query($pdo, "SELECT COUNT(*) FROM solicitudes_espacios WHERE estado = 'Pendiente'");
     } else {
         $spacesCount = scalar_query(
@@ -183,11 +183,11 @@ require __DIR__ . '/includes/header.php';
         <strong><?= $tramitesCount ?></strong>
         <p><?= $isManager ? 'Pendientes de gestión' : 'Solicitudes en revisión' ?></p>
     </article><?php endif; ?>
-    <article class="stat-card" style="--stat-glow:rgba(85,201,242,.12)">
+    <?php if ($isSpaceManager || $isProfessor): ?><article class="stat-card" style="--stat-glow:rgba(85,201,242,.12)">
         <div class="stat-top"><span>RESERVAS PENDIENTES</span><span class="stat-icon"><?= icon('building', 19) ?></span></div>
         <strong><?= $spacesCount ?></strong>
         <p><?= $isSpaceManager ? 'Pendientes de respuesta' : 'Solicitudes activas' ?></p>
-    </article>
+    </article><?php endif; ?>
     <?php if (!$isSpaceManagerOnly): ?><article class="stat-card" style="--stat-glow:rgba(69,215,146,.12)">
         <div class="stat-top"><span>PRÓXIMAS REUNIONES</span><span class="stat-icon"><?= icon('calendar', 19) ?></span></div>
         <strong><?= $meetingsCount ?></strong>
