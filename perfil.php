@@ -57,6 +57,23 @@ $courseStmt = $pdo->prepare(
 $courseStmt->execute([$userId]);
 $course = $courseStmt->fetch() ?: null;
 
+$attendanceHistory = [];
+if (has_role('Alumno')) {
+    $attendanceStmt = $pdo->prepare(
+        "SELECT pa.fecha, pa.estado, cu.anio, cu.division, cu.turno, e.nombre AS especialidad
+         FROM preceptoria_asistencias pa
+         JOIN alumno_curso ac ON ac.usuario_id = pa.alumno_id
+            AND ac.curso_id = pa.curso_id
+            AND ac.anio_lectivo = YEAR(CURDATE())
+         JOIN cursos cu ON cu.id = pa.curso_id
+         LEFT JOIN especialidades e ON e.id = cu.especialidad_id
+         WHERE pa.alumno_id = ? AND YEAR(pa.fecha) = YEAR(CURDATE())
+         ORDER BY pa.fecha DESC, cu.anio, cu.division"
+    );
+    $attendanceStmt->execute([$userId]);
+    $attendanceHistory = $attendanceStmt->fetchAll();
+}
+
 $pageTitle = 'Mi perfil';
 $activePage = 'perfil';
 require __DIR__ . '/includes/header.php';
@@ -79,4 +96,31 @@ require __DIR__ . '/includes/header.php';
         <article class="panel"><header class="panel-header"><div><h3>Seguridad</h3><p>Cambiá tu contraseña de acceso.</p></div></header><form method="post" class="panel-body"><?= csrf_field() ?><input type="hidden" name="action" value="change_password"><div class="form-grid"><div class="form-group full"><label>Contraseña actual</label><input class="input-control" type="password" name="password_actual" autocomplete="current-password" required></div><div class="form-group"><label>Nueva contraseña</label><input class="input-control" type="password" name="password_nueva" minlength="8" autocomplete="new-password" required></div><div class="form-group"><label>Repetir nueva contraseña</label><input class="input-control" type="password" name="password_confirmar" minlength="8" autocomplete="new-password" required></div></div><div class="form-actions"><button class="btn btn-primary" type="submit">Cambiar contraseña</button></div></form></article>
     </div>
 </section>
+<?php if (has_role('Alumno')): ?>
+<section class="panel" style="margin-top:18px">
+    <header class="panel-header">
+        <div><h3>Mi asistencia</h3><p>Solo vos podés consultar tus registros de asistencia del ciclo lectivo actual.</p></div>
+    </header>
+    <div class="panel-body">
+        <?php if (!$attendanceHistory): ?>
+            <p class="muted">Todavía no hay asistencias registradas para tu curso en este ciclo lectivo.</p>
+        <?php else: ?>
+            <div class="table-wrap">
+                <table>
+                    <thead><tr><th>Fecha</th><th>Curso</th><th>Estado</th></tr></thead>
+                    <tbody>
+                    <?php foreach ($attendanceHistory as $attendance): ?>
+                        <tr>
+                            <td><?= e(format_date($attendance['fecha'])) ?></td>
+                            <td><?= e(course_label($attendance)) ?></td>
+                            <td><span class="status <?= e(status_class($attendance['estado'])) ?>"><?= e($attendance['estado']) ?></span></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        <?php endif; ?>
+    </div>
+</section>
+<?php endif; ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>

@@ -208,8 +208,7 @@ $observationsStmt = $pdo->prepare(
      JOIN alumno_curso ac ON ac.usuario_id = o.alumno_id AND ac.curso_id = o.curso_id AND ac.anio_lectivo = YEAR(CURDATE())
      JOIN usuarios u ON u.id = o.alumno_id AND u.activo = 1
      WHERE o.curso_id = ?
-     ORDER BY o.created_at DESC
-     LIMIT 300"
+     ORDER BY o.created_at DESC"
 );
 foreach ($courses as $courseId => $course) {
     $observationsStmt->execute([$userId, $courseId]);
@@ -242,6 +241,11 @@ require __DIR__ . '/includes/header.php';
         <h2>Seguimiento de tus cursos</h2>
         <p>Registrá asistencia, consultá reuniones y anotá observaciones de alumnos en tus cursos asignados.</p>
     </div>
+    <?php if ($courses): ?><div class="page-actions">
+        <a class="btn btn-primary" href="#asistencia">Asistencia por fecha</a>
+        <a class="btn" href="#observaciones">Observaciones</a>
+        <a class="btn" href="#reuniones-curso">Reuniones</a>
+    </div><?php endif; ?>
 </section>
 
 <section class="stats-grid" aria-label="Resumen de preceptoría">
@@ -250,12 +254,6 @@ require __DIR__ . '/includes/header.php';
     <article class="stat-card"><div class="stat-top"><span>REUNIONES PRÓXIMAS</span><span class="stat-icon"><?= icon('calendar', 19) ?></span></div><strong><?= array_sum(array_map(static fn(array $course): int => count($course['meetings']), $courses)) ?></strong><p>Convocatorias de tus cursos</p></article>
 </section>
 
-<form class="filter-bar" method="get">
-    <label class="form-group" for="attendanceDate"><span>Consultar asistencia guardada por fecha</span><input class="input-control" id="attendanceDate" type="date" name="fecha" value="<?= e($selectedDate) ?>" max="<?= e(date('Y-m-d')) ?>"></label>
-    <button class="btn" type="submit">Ver asistencia</button>
-</form>
-<p class="muted">Elegí una fecha para consultar los estados guardados de tus cursos. Si necesitás corregirlos, cambialos en la lista y guardá nuevamente.</p>
-
 <?php if (!$courses): ?>
     <section class="empty-state">
         <div class="empty-icon"><?= icon('users', 30) ?></div>
@@ -263,88 +261,116 @@ require __DIR__ . '/includes/header.php';
         <p>Pedile al Directivo con cargo de Rector que revise tu asignación de cursos.</p>
     </section>
 <?php else: ?>
-    <?php foreach ($courses as $courseId => $course): ?>
-        <section class="panel" id="curso-<?= (int) $courseId ?>" style="margin-bottom:18px">
-            <header class="panel-header">
-                <div>
-                    <h3><?= e(course_label($course)) ?></h3>
-                    <p><?= count($course['students']) ?> <?= count($course['students']) === 1 ? 'alumno activo' : 'alumnos activos' ?></p>
-                </div>
-            </header>
-            <div class="panel-body">
-                <h4>Asistencia guardada · <?= e(format_date($selectedDate)) ?></h4>
-                <?php if (!$course['students']): ?>
-                    <p class="muted">Todavía no hay alumnos activos inscriptos en este curso para el ciclo lectivo actual.</p>
-                <?php else: ?>
-                    <form method="post">
-                        <?= csrf_field() ?>
-                        <input type="hidden" name="action" value="save_attendance">
-                        <input type="hidden" name="curso_id" value="<?= (int) $courseId ?>">
-                        <input type="hidden" name="fecha" value="<?= e($selectedDate) ?>">
-                        <div class="table-wrap">
-                            <table>
-                                <thead><tr><th>Apellido</th><th>Nombre</th><th>Estado</th></tr></thead>
-                                <tbody>
-                                <?php foreach ($course['students'] as $studentId => $student): ?>
-                                    <tr>
-                                        <td><?= e($student['alumno_apellido']) ?></td>
-                                        <td><?= e($student['alumno_nombre']) ?></td>
-                                        <td>
-                                            <select class="select-control" name="attendance[<?= (int) $studentId ?>]">
-                                                <option value="">Sin registrar</option>
-                                                <?php foreach (['Presente', 'Ausente', 'Tarde', 'Justificado'] as $status): ?>
-                                                    <option value="<?= e($status) ?>" <?= $student['asistencia_estado'] === $status ? 'selected' : '' ?>><?= e($status) ?></option>
+    <section class="panel" id="asistencia" style="margin-bottom:18px">
+        <header class="panel-header"><div><h3>Asistencia por fecha</h3><p>Elegí el día y consultá o actualizá el registro de cada curso asignado.</p></div></header>
+        <div class="panel-body">
+            <form class="filter-bar" method="get">
+                <label class="form-group" for="attendanceDate"><span>Fecha de asistencia</span><input class="input-control" id="attendanceDate" type="date" name="fecha" value="<?= e($selectedDate) ?>" max="<?= e(date('Y-m-d')) ?>"></label>
+                <button class="btn btn-primary" type="submit">Ver asistencia</button>
+            </form>
+            <?php foreach ($courses as $courseId => $course): ?>
+                <article class="panel" id="curso-<?= (int) $courseId ?>" style="margin:14px 0">
+                    <header class="panel-header">
+                        <div><h4><?= e(course_label($course)) ?></h4><p><?= count($course['students']) ?> <?= count($course['students']) === 1 ? 'alumno activo' : 'alumnos activos' ?> · <?= e(format_date($selectedDate)) ?></p></div>
+                    </header>
+                    <div class="panel-body">
+                        <?php if (!$course['students']): ?>
+                            <p class="muted">Todavía no hay alumnos activos inscriptos en este curso para el ciclo lectivo actual.</p>
+                        <?php else: ?>
+                            <form method="post">
+                                <?= csrf_field() ?>
+                                <input type="hidden" name="action" value="save_attendance">
+                                <input type="hidden" name="curso_id" value="<?= (int) $courseId ?>">
+                                <input type="hidden" name="fecha" value="<?= e($selectedDate) ?>">
+                                <div class="table-wrap">
+                                    <table>
+                                        <thead><tr><th>Apellido</th><th>Nombre</th><th>Estado guardado</th></tr></thead>
+                                        <tbody>
+                                        <?php foreach ($course['students'] as $studentId => $student): ?>
+                                            <tr>
+                                                <td><?= e($student['alumno_apellido']) ?></td>
+                                                <td><?= e($student['alumno_nombre']) ?></td>
+                                                <td>
+                                                    <select class="select-control" name="attendance[<?= (int) $studentId ?>]">
+                                                        <option value="">Sin registrar</option>
+                                                        <?php foreach (['Presente', 'Ausente', 'Tarde', 'Justificado'] as $status): ?>
+                                                            <option value="<?= e($status) ?>" <?= $student['asistencia_estado'] === $status ? 'selected' : '' ?>><?= e($status) ?></option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar asistencia de este curso</button></div>
+                            </form>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
+
+    <section class="panel" id="observaciones" style="margin-bottom:18px">
+        <header class="panel-header"><div><h3>Observaciones por alumno</h3><p>Consultá el historial y agregá observaciones en un espacio separado de la asistencia.</p></div></header>
+        <div class="panel-body">
+            <p class="muted">Las observaciones son privadas y solo las puede consultar el preceptor actualmente asignado al curso. Se muestra el historial guardado de cada alumno.</p>
+            <?php foreach ($courses as $courseId => $course): ?>
+                <article class="panel" style="margin:14px 0">
+                    <header class="panel-header"><div><h4><?= e(course_label($course)) ?></h4><p><?= count($course['students']) ?> alumnos</p></div></header>
+                    <div class="panel-body">
+                        <?php if (!$course['students']): ?>
+                            <p class="muted">Este curso todavía no tiene alumnos activos.</p>
+                        <?php else: ?>
+                            <?php foreach ($course['students'] as $studentId => $student): ?>
+                                <?php $studentObservations = $course['observations'][$studentId] ?? []; ?>
+                                <details class="panel" style="margin:10px 0">
+                                    <summary class="panel-header" style="cursor:pointer">
+                                        <strong><?= e($student['alumno_apellido'] . ', ' . $student['alumno_nombre']) ?></strong>
+                                        <span class="muted"><?= count($studentObservations) ?> observaciones · Ver historial</span>
+                                    </summary>
+                                    <div class="panel-body">
+                                        <?php if ($studentObservations): ?>
+                                            <div class="list">
+                                                <?php foreach ($studentObservations as $observation): ?>
+                                                    <article class="list-item">
+                                                        <div class="list-copy"><p><?= nl2br(e($observation['observacion'])) ?></p><small class="muted"><?= e(format_date($observation['created_at'], true)) ?></small></div>
+                                                    </article>
                                                 <?php endforeach; ?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar asistencia</button></div>
-                    </form>
-
-                    <div class="section-divider"></div>
-                    <h4>Historial de observaciones de seguimiento</h4>
-                    <p class="muted">Cada curso tiene un solo preceptor. Las observaciones solo las puede consultar la persona actualmente asignada a este curso.</p>
-                    <?php foreach ($course['students'] as $studentId => $student): ?>
-                        <?php $studentObservations = $course['observations'][$studentId] ?? []; ?>
-                        <details class="panel" style="margin:10px 0">
-                            <summary class="panel-header" style="cursor:pointer">
-                                <strong><?= e($student['alumno_apellido'] . ', ' . $student['alumno_nombre']) ?></strong>
-                                <span class="muted">Ver historial y agregar observación · <?= count($studentObservations) ?> recientes</span>
-                            </summary>
-                            <div class="panel-body">
-                                <form method="post">
-                                    <?= csrf_field() ?>
-                                    <input type="hidden" name="action" value="add_observation">
-                                    <input type="hidden" name="curso_id" value="<?= (int) $courseId ?>">
-                                    <input type="hidden" name="alumno_id" value="<?= (int) $studentId ?>">
-                                    <div class="form-group">
-                                        <label for="observation-<?= (int) $courseId ?>-<?= (int) $studentId ?>">Nueva observación</label>
-                                        <textarea class="textarea-control" id="observation-<?= (int) $courseId ?>-<?= (int) $studentId ?>" name="observacion" minlength="5" maxlength="2000" required></textarea>
+                                            </div>
+                                        <?php else: ?>
+                                            <p class="muted">Todavía no hay observaciones registradas para este alumno.</p>
+                                        <?php endif; ?>
+                                        <div class="section-divider"></div>
+                                        <form method="post">
+                                            <?= csrf_field() ?>
+                                            <input type="hidden" name="action" value="add_observation">
+                                            <input type="hidden" name="curso_id" value="<?= (int) $courseId ?>">
+                                            <input type="hidden" name="alumno_id" value="<?= (int) $studentId ?>">
+                                            <div class="form-group">
+                                                <label for="observation-<?= (int) $courseId ?>-<?= (int) $studentId ?>">Nueva observación</label>
+                                                <textarea class="textarea-control" id="observation-<?= (int) $courseId ?>-<?= (int) $studentId ?>" name="observacion" minlength="5" maxlength="2000" required></textarea>
+                                            </div>
+                                            <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar observación</button></div>
+                                        </form>
                                     </div>
-                                    <div class="form-actions"><button class="btn btn-primary" type="submit">Guardar observación</button></div>
-                                </form>
-                                <?php if ($studentObservations): ?>
-                                    <div class="section-divider"></div>
-                                    <p class="muted">Se muestran las últimas <?= min(5, count($studentObservations)) ?> observaciones guardadas.</p>
-                                    <?php foreach (array_slice($studentObservations, 0, 5) as $observation): ?>
-                                        <article class="list-item">
-                                            <div class="list-copy"><p><?= nl2br(e($observation['observacion'])) ?></p><small class="muted"><?= e(format_date($observation['created_at'], true)) ?></small></div>
-                                        </article>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <p class="muted">Todavía no hay observaciones registradas.</p>
-                                <?php endif; ?>
-                            </div>
-                        </details>
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                                </details>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </article>
+            <?php endforeach; ?>
+        </div>
+    </section>
 
-                <div class="section-divider"></div>
-                <h4>Próximas reuniones del curso</h4>
+    <section class="panel" id="reuniones-curso">
+        <header class="panel-header"><div><h3>Reuniones de tus cursos</h3><p>Próximas convocatorias asociadas a los cursos asignados.</p></div></header>
+        <div class="panel-body">
+    <?php foreach ($courses as $courseId => $course): ?>
+        <article class="panel" style="margin:14px 0">
+            <header class="panel-header"><div><h4><?= e(course_label($course)) ?></h4></div></header>
+            <div class="panel-body">
                 <?php if (!$course['meetings']): ?>
                     <p class="muted">No hay reuniones futuras convocadas para este curso.</p>
                 <?php else: ?>
@@ -358,7 +384,9 @@ require __DIR__ . '/includes/header.php';
                     </div>
                 <?php endif; ?>
             </div>
-        </section>
+        </article>
     <?php endforeach; ?>
+        </div>
+    </section>
 <?php endif; ?>
 <?php require __DIR__ . '/includes/footer.php'; ?>
