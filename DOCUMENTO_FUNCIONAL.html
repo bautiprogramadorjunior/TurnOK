@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Documento funcional del sistema TurnOK para la Escuela Técnica Otto Krause.">
+    <title>TurnOK | Documento funcional</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #17243b;
+            --muted: #5e6d82;
+            --line: #dce4ee;
+            --paper: #fff;
+            --canvas: #f3f6fb;
+            --blue: #2865bd;
+            --blue-pale: #eaf2ff;
+            --green: #15815f;
+            --green-pale: #e8f7f0;
+            --amber: #a5660a;
+            --amber-pale: #fff4df;
+            --violet: #7246a8;
+            --violet-pale: #f2ebfc;
+        }
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: var(--canvas);
+            color: var(--ink);
+            font: 15px/1.6 "Segoe UI", Arial, sans-serif;
+        }
+        .page { width: min(1080px, calc(100% - 36px)); margin: 30px auto 56px; }
+        .hero {
+            padding: 43px 48px;
+            border-radius: 22px;
+            background: linear-gradient(125deg, #122744, #20549a);
+            color: #fff;
+            box-shadow: 0 14px 40px #18395b24;
+        }
+        .eyebrow { margin: 0 0 8px; color: #c4dcff; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+        h1 { max-width: 780px; margin: 0; font-size: clamp(34px, 5vw, 50px); line-height: 1.1; letter-spacing: -.035em; }
+        .hero > p:not(.eyebrow) { max-width: 780px; margin: 17px 0 0; color: #e1ecfa; font-size: 17px; }
+        .chips { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+        .chips span { padding: 6px 11px; border: 1px solid #ffffff40; border-radius: 99px; color: #eff6ff; font-size: 13px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 9px; margin: 18px 0 28px; }
+        .toolbar a, .toolbar button {
+            display: inline-block;
+            padding: 8px 12px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--paper);
+            color: #214d86;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .toolbar a:hover, .toolbar button:hover { background: #edf4ff; }
+        section { margin-top: 30px; scroll-margin-top: 18px; }
+        .heading { margin-bottom: 15px; }
+        .heading h2 { margin: 0; font-size: 25px; letter-spacing: -.025em; }
+        .heading p { margin: 4px 0 0; color: var(--muted); }
+        .card {
+            padding: 23px;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--paper);
+            box-shadow: 0 5px 18px #18395b08;
+        }
+        .summary {
+            padding: 19px 21px;
+            border-left: 5px solid var(--blue);
+            border-radius: 10px;
+            background: var(--blue-pale);
+        }
+        .summary p { margin: 0; }
+        .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+        .tile {
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            background: #fbfdff;
+        }
+        .tile h3 { margin: 0 0 7px; font-size: 16px; }
+        .tile p { margin: 0; color: var(--muted); font-size: 14px; }
+        .tile.blue { border-top: 4px solid var(--blue); }
+        .tile.green { border-top: 4px solid var(--green); }
+        .tile.amber { border-top: 4px solid var(--amber); }
+        .tile.violet { border-top: 4px solid var(--violet); }
+        .table-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid #e8edf3; text-align: left; vertical-align: top; }
+        tr:last-child td { border-bottom: 0; }
+        th { background: #f7f9fc; color: #52647b; font-size: 11px; letter-spacing: .065em; text-transform: uppercase; }
+        td { font-size: 13px; }
+        td:first-child { min-width: 155px; font-weight: 700; }
+        .badge {
+            display: inline-block;
+            margin: 2px 3px 2px 0;
+            padding: 3px 8px;
+            border-radius: 99px;
+            background: #edf1f5;
+            color: #43546a;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .badge.blue { background: var(--blue-pale); color: #214d86; }
+        .badge.green { background: var(--green-pale); color: #12664d; }
+        .badge.amber { background: var(--amber-pale); color: #805008; }
+        .badge.violet { background: var(--violet-pale); color: #603a91; }
+        .steps { display: grid; gap: 11px; counter-reset: step; }
+        .step {
+            position: relative;
+            min-height: 54px;
+            padding: 13px 16px 13px 54px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fbfdff;
+        }
+        .step::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 15px;
+            top: 12px;
+            display: grid;
+            width: 27px;
+            height: 27px;
+            place-items: center;
+            border-radius: 50%;
+            background: var(--blue-pale);
+            color: #214d86;
+            font-weight: 800;
+        }
+        .step strong { display: block; }
+        .step span { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; }
+        .rule-list { margin: 0; padding-left: 21px; }
+        .rule-list li + li { margin-top: 8px; }
+        .callout {
+            margin-top: 15px;
+            padding: 15px 17px;
+            border: 1px solid #f0d9ad;
+            border-radius: 11px;
+            background: #fff9ed;
+            color: #634815;
+            font-size: 13px;
+        }
+        .callout strong { color: #4f390f; }
+        .footer { margin-top: 29px; padding: 17px 4px; color: var(--muted); font-size: 12px; text-align: center; }
+        code { padding: 2px 5px; border-radius: 5px; background: #f0f3f7; color: #253b59; font: 12px Consolas, "Courier New", monospace; }
+        @media (max-width: 680px) {
+            .page { width: min(100% - 22px, 1080px); margin-top: 12px; }
+            .hero { padding: 29px 23px; border-radius: 15px; }
+            .card { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
+            th, td { padding: 9px 10px; }
+        }
+        @media print {
+            @page { size: A4; margin: 15mm; }
+            body { background: #fff; font-size: 11px; }
+            .page { width: 100%; margin: 0; }
+            .hero { padding: 25px 28px; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .toolbar { display: none; }
+            .card, .table-wrap, .tile, .step { box-shadow: none; break-inside: avoid; }
+            .heading { break-after: avoid; }
+            th, .summary, .badge, .step::before { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="hero">
+        <p class="eyebrow">Escuela Técnica Otto Krause · Proyecto institucional</p>
+        <h1>Documento funcional de TurnOK</h1>
+        <p>Descripción de los objetivos, perfiles, módulos, procesos y reglas funcionales de la plataforma para organizar trámites, reservas de espacios y reuniones escolares.</p>
+        <div class="chips">
+            <span>Versión 1.0</span>
+            <span>20 de octubre de 2026</span>
+            <span>Aplicación web con PHP y MySQL / MariaDB</span>
+        </div>
+    </header>
+
+    <nav class="toolbar" aria-label="Navegación del documento">
+        <a href="#objetivo">Objetivo</a>
+        <a href="#perfiles">Perfiles</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#procesos">Procesos</a>
+        <a href="#reglas">Reglas</a>
+        <a href="MANUAL_USUARIO.html">Manual de usuario</a>
+        <button type="button" onclick="window.print()">Imprimir o guardar como PDF</button>
+    </nav>
+
+    <section id="objetivo">
+        <div class="heading">
+            <h2>1. Propósito y alcance</h2>
+            <p>Qué problema resuelve TurnOK y qué funciones cubre.</p>
+        </div>
+        <div class="card">
+            <div class="summary">
+                <p><strong>TurnOK</strong> centraliza y organiza gestiones institucionales de la Escuela Técnica Otto Krause. Permite que las personas habilitadas realicen solicitudes y sigan su estado, mientras que los responsables las revisan y responden desde una plataforma común.</p>
+            </div>
+            <div class="grid" style="margin-top:14px">
+                <article class="tile blue">
+                    <h3>Problema</h3>
+                    <p>Los pedidos realizados por medios dispersos pueden generar demoras, confusiones y dificultad para conocer quién debe responder o en qué estado está una gestión.</p>
+                </article>
+                <article class="tile green">
+                    <h3>Objetivo</h3>
+                    <p>Reunir solicitudes de trámites, reservas de espacios y reuniones en un sistema web con acceso institucional y seguimiento del proceso.</p>
+                </article>
+                <article class="tile amber">
+                    <h3>Alcance funcional</h3>
+                    <p>Acceso de usuarios, gestión de permisos, trámites y turnos, reservas y aprobaciones por espacio/turno, reuniones, notificaciones, perfiles y registro de acciones.</p>
+                </article>
+                <article class="tile violet">
+                    <h3>Usuarios destinatarios</h3>
+                    <p>Alumnos, profesores, personal administrativo, directivos y personas con cargos institucionales habilitados, como encargados de espacios.</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section id="perfiles">
+        <div class="heading">
+            <h2>2. Perfiles y permisos</h2>
+            <p>Los permisos se determinan por los roles y cargos activos asignados a cada cuenta. El detalle de uso y el alcance real de cada cargo se describe en el <a href="MANUAL_USUARIO.html">manual de usuario</a>.</p>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>Perfil / condición</th><th>Funciones principales</th><th>Limitaciones importantes</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Alumno</td>
+                        <td>
+                            <span class="badge blue">Solicitar trámites</span>
+                            <span class="badge blue">Solicitar reuniones</span>
+                            <span class="badge">Consultar notificaciones</span>
+                            <span class="badge">Administrar su perfil</span>
+                        </td>
+                        <td>Ve y sigue sus propios trámites, solicitudes y reuniones relacionadas. No administra solicitudes institucionales ni crea reuniones masivas.</td>
+                    </tr>
+                    <tr>
+                        <td>Profesor</td>
+                        <td>
+                            <span class="badge blue">Solicitar trámites</span>
+                            <span class="badge green">Solicitar espacios</span>
+                            <span class="badge blue">Solicitar reuniones</span>
+                            <span class="badge">Consultar notificaciones</span>
+                        </td>
+                        <td>Solo puede cancelar sus propias solicitudes de espacio mientras estén pendientes. No aprueba reservas salvo que también tenga permisos institucionales aplicables.</td>
+                    </tr>
+                    <tr>
+                        <td>Administrativo</td>
+                        <td>
+                            <span class="badge amber">Gestionar trámites</span>
+                            <span class="badge violet">Crear reuniones institucionales</span>
+                            <span class="badge green">Consultar espacios</span>
+                        </td>
+                        <td>No puede precargar usuarios, asignar roles ni cargos. La gestión de espacios se realiza conforme a los permisos institucionales existentes; el cargo de encargado queda restringido como se describe abajo.</td>
+                    </tr>
+                    <tr>
+                        <td>Directivo</td>
+                        <td>
+                            <span class="badge amber">Gestionar trámites</span>
+                            <span class="badge violet">Crear reuniones institucionales</span>
+                            <span class="badge">Administrar usuarios (solo Rector)</span>
+                            <span class="badge green">Consultar espacios</span>
+                        </td>
+                        <td>Las funciones operativas son las mismas que las del perfil Administrativo. La administración de usuarios se habilita solo si tiene el cargo activo de Rector; debe conservarse al menos un Rector activo.</td>
+                    </tr>
+                    <tr>
+                        <td>Preceptor</td>
+                        <td>
+                            <span class="badge blue">Consultar cursos y nóminas asignados</span>
+                            <span class="badge">Registrar asistencia diaria</span>
+                            <span class="badge">Agregar observaciones privadas</span>
+                            <span class="badge violet">Consultar reuniones de sus cursos</span>
+                            <span class="badge">Consultar notificaciones y perfil</span>
+                        </td>
+                        <td>El cargo Preceptor no requiere un rol general. Solo accede a sus cursos; registra asistencia diaria, consulta alumnos activos y reuniones del curso, y agrega observaciones privadas visibles para el preceptor actualmente asignado. No puede usar módulos generales ni editar datos del alumno.</td>
+                    </tr>
+                    <tr>
+                        <td>Encargado de Espacio</td>
+                        <td>
+                            <span class="badge green">Revisar reservas asignadas</span>
+                            <span class="badge green">Aprobar o rechazar por espacio y turno</span>
+                            <span class="badge">Consultar notificaciones y perfil</span>
+                        </td>
+                        <td>El cargo activo de Encargado de Espacio limita la cuenta a funciones de espacios; no habilita trámites, reuniones ni administración institucional, incluso si conserva además un rol administrativo.</td>
+                    </tr>
+                    <tr>
+                        <td>Destinatario con cargo</td>
+                        <td>Puede responder las solicitudes de reunión dirigidas específicamente a su cuenta y consultar las reuniones vinculadas a ella.</td>
+                        <td>Responder la solicitud requiere ser el destinatario y que siga pendiente. La posibilidad de entrar al módulo también depende de los roles permitidos para la sección.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="callout">
+            <strong>Nota sobre combinaciones:</strong> una persona puede tener varios roles y cargos, pero algunos cargos tienen restricciones propias. “Preceptor” usa un módulo separado y no habilita los módulos generales. “Encargado de Espacio” limita la cuenta a la gestión de espacios. El cargo Rector habilita la administración de usuarios únicamente combinado con el rol Directivo. La mayoría de los otros cargos identifica una función institucional, pero no agrega permisos específicos en la aplicación actual; ver el <a href="MANUAL_USUARIO.html">manual de usuario</a>.
+        </div>
+    </section>
+
+    <section id="modulos">
+        <div class="heading">
+            <h2>3. Módulos funcionales</h2>
+            <p>Resumen de las secciones disponibles y de la información que gestionan.</p>
+        </div>
+        <div class="grid">
+            <article class="tile blue">
+                <h3>Acceso y registro</h3>
+                <p>La institución precarga la cuenta. La persona se identifica con DNI; en el primer ingreso define una contraseña y, en los accesos siguientes, ingresa con su contraseña existente. Las cuentas inactivas no pueden ingresar.</p>
+            </article>
+            <article class="tile blue">
+                <h3>Panel principal</h3>
+                <p>Muestra un resumen de pendientes, próximas reuniones, notificaciones y actividad reciente, adaptado a los permisos de la cuenta. Ofrece accesos rápidos según el perfil.</p>
+            </article>
+            <article class="tile amber">
+                <h3>Trámites</h3>
+                <p>Alumnos y profesores crean solicitudes seleccionando un tipo, describiendo el motivo y eligiendo prioridad. Administrativos y directivos revisan solicitudes, asignan responsable, estado, comentarios y, si corresponde, un turno.</p>
+            </article>
+            <article class="tile green">
+                <h3>Espacios</h3>
+                <p>Profesores consultan espacios disponibles y envían reservas con fecha, horario y motivo. Los encargados responden las reservas que les corresponden por espacio y turno. El sistema comprueba superposiciones antes de aprobar.</p>
+            </article>
+            <article class="tile blue">
+                <h3>Preceptoría</h3>
+                <p>El preceptor consulta sus cursos y alumnos activos, registra asistencia diaria (Presente, Ausente, Tarde o Justificado), consulta reuniones futuras de sus cursos y agrega observaciones privadas de seguimiento. Solo el preceptor actualmente asignado al curso puede consultar esas observaciones.</p>
+            </article>
+            <article class="tile violet">
+                <h3>Reuniones</h3>
+                <p>Alumnos y profesores pueden solicitar reuniones a personas con cargos institucionales. Administrativos/directivos crean reuniones institucionales de tipo personal, por curso, para varios cursos o masivas.</p>
+            </article>
+            <article class="tile violet">
+                <h3>Participación y asistencia</h3>
+                <p>Las personas convocadas individualmente pueden confirmar o rechazar su participación. El creador de una reunión o un usuario institucional autorizado puede registrar la asistencia individual.</p>
+            </article>
+            <article class="tile">
+                <h3>Notificaciones</h3>
+                <p>Cada usuario consulta su bandeja, filtra notificaciones no leídas y marca una o todas como leídas. Las novedades se generan, entre otros casos, al responder trámites o reservas y al asignar reuniones.</p>
+            </article>
+            <article class="tile">
+                <h3>Usuarios</h3>
+                <p>Solo un Directivo con cargo activo de Rector puede precargar usuarios, asignar roles y cargos, asignar a preceptores sus cursos, y vincular cursos y espacios a los cargos correspondientes. También puede activar/desactivar cuentas, reiniciar accesos y eliminar cuentas sin historial institucional protegido. Los perfiles Administrativos no acceden a esta administración.</p>
+            </article>
+            <article class="tile">
+                <h3>Perfil</h3>
+                <p>La persona consulta su información institucional, roles, cargos y curso. Puede actualizar su teléfono y cambiar su contraseña.</p>
+            </article>
+            <article class="tile">
+                <h3>Auditoría</h3>
+                <p>El sistema registra acciones relevantes como accesos, creación y gestión de solicitudes, cambios de cuenta, asistencia y modificaciones del perfil.</p>
+            </article>
+        </div>
+    </section>
+
+    <section id="procesos">
+        <div class="heading">
+            <h2>4. Procesos principales</h2>
+            <p>Recorridos desde el inicio de una solicitud hasta su seguimiento.</p>
+        </div>
+        <div class="grid">
+            <article class="card">
+                <h3 style="margin-top:0">A. Solicitud y gestión de trámite</h3>
+                <div class="steps">
+                    <div class="step"><strong>Ingreso</strong><span>El usuario inicia sesión con su DNI y contraseña; el sistema reconoce su perfil.</span></div>
+                    <div class="step"><strong>Creación</strong><span>Alumno o profesor selecciona el tipo, explica el motivo y define una prioridad.</span></div>
+                    <div class="step"><strong>Revisión institucional</strong><span>Administrativo o directivo consulta la solicitud, asigna un responsable y actualiza su estado.</span></div>
+                    <div class="step"><strong>Turno opcional</strong><span>Al aprobar, puede indicar fecha, hora y lugar del turno.</span></div>
+                    <div class="step"><strong>Seguimiento</strong><span>El solicitante consulta el estado, los comentarios, el responsable y el turno asignado; recibe notificaciones de aprobación o rechazo.</span></div>
+                </div>
+            </article>
+            <article class="card">
+                <h3 style="margin-top:0">B. Reserva y gestión de espacio</h3>
+                <div class="steps">
+                    <div class="step"><strong>Solicitud</strong><span>Un profesor elige un espacio disponible, fecha, hora de inicio y fin, y describe el motivo.</span></div>
+                    <div class="step"><strong>Asignación del responsable</strong><span>El sistema identifica al encargado que tiene asignado ese espacio y el turno correspondiente.</span></div>
+                    <div class="step"><strong>Revisión</strong><span>El encargado revisa la solicitud. Si la rechaza, debe informar un motivo.</span></div>
+                    <div class="step"><strong>Control de horario</strong><span>Antes de aprobar, el sistema comprueba que no exista una reserva aprobada que se superponga para el mismo espacio y fecha.</span></div>
+                    <div class="step"><strong>Respuesta</strong><span>El estado se actualiza y el profesor recibe una notificación. Mientras siga pendiente, puede cancelar su propia solicitud.</span></div>
+                </div>
+            </article>
+            <article class="card">
+                <h3 style="margin-top:0">C. Solicitud de reunión personal</h3>
+                <div class="steps">
+                    <div class="step"><strong>Pedido</strong><span>Alumno o profesor elige un destinatario con cargo institucional activo y explica el motivo.</span></div>
+                    <div class="step"><strong>Respuesta</strong><span>Solo el destinatario puede responder la solicitud pendiente.</span></div>
+                    <div class="step"><strong>Rechazo</strong><span>El destinatario escribe un motivo y la solicitud queda rechazada.</span></div>
+                    <div class="step"><strong>Aceptación y agenda</strong><span>El destinatario indica título, fecha, horario y lugar; la solicitud se acepta y se crea la reunión personal.</span></div>
+                    <div class="step"><strong>Convocatoria</strong><span>Las personas participantes quedan registradas y reciben la notificación correspondiente.</span></div>
+                </div>
+            </article>
+            <article class="card">
+                <h3 style="margin-top:0">D. Reunión institucional</h3>
+                <div class="steps">
+                    <div class="step"><strong>Creación</strong><span>Un administrativo o directivo completa título, tipo, fecha, horario y lugar.</span></div>
+                    <div class="step"><strong>Selección del público</strong><span>Según el tipo, selecciona personas, uno o más cursos, o roles/grupos convocados.</span></div>
+                    <div class="step"><strong>Convocatoria</strong><span>La reunión y sus participantes/segmentos quedan guardados para consulta.</span></div>
+                    <div class="step"><strong>Confirmación</strong><span>Los participantes individuales registran si asistirán o no.</span></div>
+                    <div class="step"><strong>Asistencia</strong><span>El creador o un usuario institucional autorizado registra la asistencia individual.</span></div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section id="reglas">
+        <div class="heading">
+            <h2>5. Reglas de negocio y validaciones</h2>
+            <p>Condiciones que el sistema comprueba para mantener consistentes las gestiones.</p>
+        </div>
+        <div class="card">
+            <ul class="rule-list">
+                <li><strong>Identificación:</strong> el DNI debe corresponder a una cuenta precargada y activa. La contraseña inicial debe tener al menos 8 caracteres, mayúscula, minúscula y número.</li>
+                <li><strong>Trámites:</strong> la solicitud requiere un tipo activo y un motivo de al menos 10 caracteres. Las prioridades permitidas son Baja, Normal y Alta.</li>
+                <li><strong>Estados de trámite:</strong> Pendiente, Aprobado, Rechazado y Finalizado. El responsable debe tener rol Administrativo o Directivo.</li>
+                <li><strong>Turnos:</strong> para asignarlos se necesitan fecha, hora y lugar válidos. Se pueden actualizar cuando ya existía uno para la solicitud.</li>
+                <li><strong>Reservas:</strong> solo profesores pueden crear y cancelar sus solicitudes. La fecha no puede estar en el pasado; la hora de fin debe ser posterior a la de inicio y el motivo debe tener al menos 10 caracteres.</li>
+                <li><strong>Turno de espacio:</strong> las solicitudes con inicio antes de las 13:30 corresponden a TM; las de inicio desde las 13:30 corresponden a TT. El encargado solo puede responder espacios y turnos que tenga asignados.</li>
+                <li><strong>Estados de reserva:</strong> Pendiente, Aprobada, Rechazada y Cancelada. Solo una solicitud pendiente puede procesarse o cancelarse.</li>
+                <li><strong>Conflicto de reservas:</strong> no se aprueba una solicitud si existe una reserva aprobada que se superpone en el mismo espacio y fecha.</li>
+                <li><strong>Solicitudes de reunión:</strong> el destinatario debe tener un cargo activo y vigente. El motivo requiere al menos 10 caracteres; el destinatario es quien responde.</li>
+                <li><strong>Reuniones:</strong> se exige título, tipo, fecha no pasada, lugar y un horario válido con fin posterior al inicio.</li>
+                <li><strong>Preceptoría:</strong> cada curso tiene como máximo un preceptor. Solo puede registrar asistencia hasta la fecha actual para alumnos activos inscriptos en sus cursos; los estados son Presente, Ausente, Tarde y Justificado.</li>
+                <li><strong>Observaciones de preceptoría:</strong> quedan limitadas al preceptor actualmente asignado al curso. El cargo Preceptor no habilita los módulos de roles generales.</li>
+                <li><strong>Seguridad de formularios:</strong> las operaciones que modifican información verifican un token CSRF de sesión.</li>
+                <li><strong>Acceso por perfil:</strong> las páginas verifican permisos en el servidor; ocultar una opción de menú no es el único control.</li>
+            </ul>
+        </div>
+        <div class="callout">
+            <strong>Alcance actual:</strong> el documento describe el comportamiento implementado en los módulos PHP del proyecto. La importación de datos de ejemplo es opcional; los usuarios reales se cargan desde la administración institucional. Las reuniones se gestionan como presenciales.
+        </div>
+    </section>
+
+    <section>
+        <div class="heading">
+            <h2>6. Requisitos de operación</h2>
+            <p>Componentes necesarios para ejecutar la aplicación en el entorno de la escuela.</p>
+        </div>
+        <div class="card">
+            <ul class="rule-list">
+                <li><strong>Servidor web:</strong> Apache mediante XAMPP o un servidor compatible con PHP.</li>
+                <li><strong>PHP:</strong> versión 8.1 o superior según la documentación del proyecto, con extensión <code>pdo_mysql</code>.</li>
+                <li><strong>Base de datos:</strong> MySQL 8 o MariaDB compatible con el esquema utilizado en la instalación local.</li>
+                <li><strong>Instalación inicial:</strong> crear la base de datos, importar <code>database/schema.sql</code> y configurar las credenciales y URL de la aplicación en su configuración.</li>
+                <li><strong>Respaldo:</strong> respaldar los archivos del proyecto y exportar la base de datos por separado.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="footer">
+        Documento funcional de TurnOK · Elaborado según las funciones y reglas visibles en el código del proyecto.
+    </footer>
+</main>
+</body>
+</html>

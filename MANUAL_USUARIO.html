@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f7fb">
+    <title>Manual de usuario · TurnOK</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #17243a;
+            --muted: #59677c;
+            --line: #dce4ef;
+            --blue: #175cd3;
+            --pale-blue: #edf4ff;
+            --pale-amber: #fff7e8;
+            --pale-green: #eaf8f0;
+            --page: #f4f7fb;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--page); color: var(--ink); font: 16px/1.65 "Segoe UI", Arial, sans-serif; }
+        .page { width: min(1080px, calc(100% - 32px)); margin: 32px auto; }
+        .hero, section, .callout { background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+        .hero { padding: 38px; background: linear-gradient(135deg, #10213c, #174b87); color: #fff; }
+        .eyebrow { margin: 0 0 8px; color: #c8dcff; font-size: .82rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+        h1 { margin: 0; font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; }
+        .hero > p:last-child { max-width: 760px; margin-bottom: 0; color: #e4edfa; }
+        nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+        nav a, nav button { border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--ink); padding: 8px 14px; font: inherit; text-decoration: none; cursor: pointer; }
+        nav a:hover, nav button:hover { color: var(--blue); border-color: var(--blue); }
+        section { margin: 16px 0; padding: 28px; }
+        h2 { margin: 0 0 8px; font-size: 1.55rem; }
+        h3 { margin: 22px 0 8px; font-size: 1.12rem; }
+        p { margin: 8px 0 14px; }
+        .intro, .muted { color: var(--muted); }
+        .callout { margin: 16px 0; padding: 18px 20px; border-left: 5px solid var(--blue); background: var(--pale-blue); }
+        .callout.amber { border-left-color: #ba7200; background: var(--pale-amber); }
+        .callout.green { border-left-color: #16834a; background: var(--pale-green); }
+        .table-wrap { overflow-x: auto; margin: 16px 0; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px 14px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+        th { background: #f5f8fc; color: #34445d; font-size: .88rem; }
+        td:first-child { min-width: 185px; font-weight: 700; }
+        ul, ol { padding-left: 24px; }
+        li { margin: 5px 0; }
+        .tag { display: inline-block; margin: 2px 4px 2px 0; padding: 2px 9px; border-radius: 999px; background: #edf4ff; color: #174b87; font-size: .86rem; font-weight: 650; }
+        footer { padding: 18px 4px; color: var(--muted); font-size: .9rem; }
+        @media (max-width: 640px) {
+            .page { width: min(100% - 20px, 1080px); margin: 10px auto; }
+            .hero, section { padding: 22px 18px; border-radius: 12px; }
+            th, td { padding: 10px; }
+        }
+        @media print {
+            body { background: #fff; font-size: 11pt; }
+            .page { width: 100%; margin: 0; }
+            .hero, section, .callout { break-inside: avoid; box-shadow: none; }
+            nav { display: none; }
+            a { color: inherit; }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="hero">
+        <p class="eyebrow">Escuela Técnica Otto Krause · TurnOK</p>
+        <h1>Manual de usuario</h1>
+        <p>Qué puede hacer cada perfil, para qué sirven los cargos institucionales y cómo usar los módulos disponibles en la página.</p>
+    </header>
+
+    <nav aria-label="Índice del manual">
+        <a href="#primeros-pasos">Primeros pasos</a>
+        <a href="#roles">Roles</a>
+        <a href="#cargos">Cargos</a>
+        <a href="#modulos">Módulos</a>
+        <a href="#diferencias">Roles y cargos</a>
+        <button type="button" onclick="window.print()">Imprimir / Guardar PDF</button>
+    </nav>
+
+    <section id="primeros-pasos">
+        <h2>1. Ingreso y navegación</h2>
+        <ol>
+            <li>La institución crea la cuenta y asigna los roles, cargos y, cuando corresponda, cursos o espacios.</li>
+            <li>En el primer ingreso, la persona usa su DNI y crea una contraseña. En los siguientes ingresos, usa el DNI y esa contraseña.</li>
+            <li>El menú lateral muestra las secciones habilitadas para la cuenta. El panel principal resume pendientes y ofrece accesos rápidos.</li>
+            <li>Desde <strong>Mi perfil</strong> se pueden consultar los datos, roles y cargos y, según los campos habilitados, actualizar el teléfono o la contraseña. <strong>Notificaciones</strong> reúne los avisos recibidos.</li>
+        </ol>
+        <div class="callout">
+            Una cuenta inactiva no puede iniciar sesión. Si no aparece una sección esperada, puede faltar el rol o cargo requerido, o una asignación de curso o espacio.
+        </div>
+    </section>
+
+    <section id="roles">
+        <h2>2. Qué hace cada rol</h2>
+        <p class="intro">El rol representa el tipo general de usuario. Define las operaciones generales que puede realizar la cuenta.</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Rol</th><th>Funciones disponibles</th><th>Qué no habilita por sí solo</th></tr></thead>
+                <tbody>
+                    <tr>
+                        <td>Alumno</td>
+                        <td>Solicitar y seguir sus trámites; pedir reuniones a personas con cargo; consultar reuniones que le correspondan; responder convocatorias individuales; ver notificaciones y administrar su perfil.</td>
+                        <td>No gestiona trámites de otras personas, no crea reuniones institucionales y no solicita reservas de espacios.</td>
+                    </tr>
+                    <tr>
+                        <td>Profesor</td>
+                        <td>Las funciones de solicitud y seguimiento de trámites y reuniones; solicitar espacios disponibles para una actividad; consultar sus reservas y cancelar las propias mientras estén pendientes; responder convocatorias y consultar notificaciones y perfil.</td>
+                        <td>No aprueba reservas de otros profesores por ser profesor. Para responder reservas de un espacio hace falta el cargo y la asignación de encargado correspondientes, o permiso de gestión institucional.</td>
+                    </tr>
+                    <tr>
+                        <td>Administrativo</td>
+                        <td>Revisar y gestionar los trámites institucionales; asignar responsables, actualizar estados y comentarios y, cuando corresponda, asignar un turno. Puede crear reuniones institucionales y consultar reuniones y espacios desde la vista institucional.</td>
+                        <td>No puede administrar cuentas, asignar roles ni cargos desde Usuarios.</td>
+                    </tr>
+                    <tr>
+                        <td>Directivo</td>
+                        <td>En la aplicación actual comparte las funciones operativas del rol Administrativo: gestión de trámites y creación de reuniones institucionales.</td>
+                        <td>El rol Directivo solo no habilita la gestión de usuarios. Para esa tarea también necesita el cargo activo de Rector.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="callout amber">
+            <strong>Importante:</strong> Administrativo y Directivo hoy tienen prácticamente los mismos permisos operativos. La diferencia concreta implementada es que un Directivo con cargo de Rector puede administrar usuarios. No hay todavía una separación de trámites o reuniones por jerarquía.
+        </div>
+    </section>
+
+    <section id="cargos">
+        <h2>3. Qué hace cada cargo institucional</h2>
+        <p class="intro">El cargo describe una responsabilidad dentro de la escuela; no equivale automáticamente a un rol. En TurnOK hay pocos cargos con permisos propios. Los demás identifican la función de la persona y pueden servir para dirigirle una solicitud de reunión.</p>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Cargo</th><th>Comportamiento actual en TurnOK</th></tr></thead>
+                <tbody>
+                    <tr><td>Rector</td><td>Si la cuenta también tiene el rol Directivo, habilita la sección Usuarios: precargar personas, asignar roles y cargos, asignar cursos a preceptores, activar o desactivar cuentas, reiniciar accesos y eliminar cuentas sin historial protegido. El sistema impide desactivar al único Rector activo.</td></tr>
+                    <tr><td>Vicerrector</td><td>No tiene una pantalla o permiso exclusivo por ese cargo. Se muestra como cargo institucional y puede figurar como destinatario de una solicitud de reunión. La gestión operativa depende del rol asignado aparte.</td></tr>
+                    <tr><td>Jefe General de Enseñanza Práctica</td><td>No tiene una pantalla o permiso exclusivo por ese cargo. Se muestra como cargo y puede figurar como destinatario de reuniones; el rol define las otras funciones.</td></tr>
+                    <tr><td>Regente Técnico TM</td><td>Identifica el cargo y puede ser destinatario de reuniones. No activa funciones separadas de regencia en la página actual.</td></tr>
+                    <tr><td>Regente Técnico TT</td><td>Identifica el cargo y puede ser destinatario de reuniones. No activa funciones separadas de regencia en la página actual.</td></tr>
+                    <tr><td>Regente Cultura TM</td><td>Identifica el cargo y puede ser destinatario de reuniones. No activa funciones separadas de regencia en la página actual.</td></tr>
+                    <tr><td>Regente Cultura TT</td><td>Identifica el cargo y puede ser destinatario de reuniones. No activa funciones separadas de regencia en la página actual.</td></tr>
+                    <tr><td>Asesora Pedagógica</td><td>Identifica el cargo y puede ser destinataria de reuniones. No activa un módulo pedagógico específico.</td></tr>
+                    <tr><td>Secretario</td><td>Identifica el cargo y puede ser destinatario de reuniones. El cargo no activa una bandeja o gestión de secretaría separada.</td></tr>
+                    <tr><td>Prosecretario</td><td>Identifica el cargo y puede ser destinatario de reuniones. El cargo no activa permisos distintos de los asociados al rol.</td></tr>
+                    <tr><td>Coordinador de Área de Primer Ciclo</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de área.</td></tr>
+                    <tr><td>Coordinador de Computación</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Coordinador de Construcciones</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Coordinador de Electricidad</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Coordinador de Electrónica</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Coordinador de Mecánica</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Coordinador de Química</td><td>Identifica el cargo y puede ser destinatario de reuniones. No hay todavía un módulo de coordinación de especialidad.</td></tr>
+                    <tr><td>Jefe de Preceptoría TM</td><td>Identifica el cargo y puede ser destinatario de reuniones. El cargo no habilita la asignación de preceptores ni el acceso al seguimiento de sus cursos.</td></tr>
+                    <tr><td>Subjefe de Preceptoría TM</td><td>Identifica el cargo y puede ser destinatario de reuniones. No agrega permisos de supervisión de preceptoría.</td></tr>
+                    <tr><td>Jefe de Preceptoría TT</td><td>Identifica el cargo y puede ser destinatario de reuniones. No agrega permisos de supervisión de preceptoría.</td></tr>
+                    <tr><td>Subjefe de Preceptoría TT</td><td>Identifica el cargo y puede ser destinatario de reuniones. No agrega permisos de supervisión de preceptoría.</td></tr>
+                    <tr><td>Preceptor</td><td>Habilita Preceptoría sin necesidad de un rol general. Permite consultar la nómina de alumnos activos de los cursos asignados, cargar asistencia (Presente, Ausente, Tarde o Justificado), agregar observaciones de seguimiento y consultar reuniones de esos cursos. Solo hay un preceptor asignado por curso; el preceptor no accede a módulos generales.</td></tr>
+                    <tr><td>Integrante DOE</td><td>Identifica el cargo y puede ser destinatario de reuniones. No existe todavía un módulo ni permisos específicos del DOE.</td></tr>
+                    <tr><td>Encargado de Espacio</td><td>Habilita la gestión de las reservas de los espacios y turnos asignados: consultar solicitudes y aprobarlas o rechazarlas. La cuenta queda limitada a funciones de espacios y no obtiene por ese cargo acceso a trámites o reuniones generales.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="callout green">
+            Para que un cargo que recibe solicitudes pueda responderlas en la sección Reuniones, la cuenta también debe tener un rol que permita abrir ese módulo (Alumno, Profesor, Administrativo o Directivo). Preceptor y Encargado de Espacio tienen acceso restringido a sus módulos específicos.
+        </div>
+    </section>
+
+    <section id="modulos">
+        <h2>4. Cómo usar los módulos</h2>
+        <h3>Trámites</h3>
+        <ul>
+            <li>Alumnos y profesores eligen el tipo, describen el motivo y seleccionan la prioridad antes de enviar.</li>
+            <li>Quien solicita ve sus propios trámites y su estado. Administrativos y directivos ven la gestión institucional, pueden asignar un responsable, actualizar el estado y dejar comentarios.</li>
+            <li>Al aprobar, se puede cargar fecha, hora y lugar de un turno. Las novedades se envían a la persona solicitante.</li>
+        </ul>
+
+        <h3>Espacios</h3>
+        <ul>
+            <li>El profesor selecciona un espacio disponible, una fecha, un horario y explica el motivo. Puede cancelar su solicitud si todavía está pendiente.</li>
+            <li>El encargado consulta y responde las solicitudes correspondientes al espacio y turno asignados. Antes de aprobar, se controla que no se superponga otra reserva aprobada.</li>
+            <li>Administrativos y directivos pueden consultar y gestionar reservas institucionalmente.</li>
+        </ul>
+
+        <h3>Preceptoría</h3>
+        <ul>
+            <li>El preceptor entra a Preceptoría y trabaja únicamente con los cursos que le asignaron.</li>
+            <li>Selecciona una fecha no futura, completa los estados de asistencia de los alumnos activos y guarda los cambios.</li>
+            <li>Puede agregar observaciones de seguimiento y consultar las reuniones asociadas a sus cursos.</li>
+        </ul>
+
+        <h3>Reuniones</h3>
+        <ul>
+            <li>Alumnos y profesores solicitan una reunión a una persona que tenga un cargo activo, explicando el motivo.</li>
+            <li>La persona destinataria responde la solicitud. Si la acepta, completa título, fecha, horario y lugar; si la rechaza, indica un motivo.</li>
+            <li>Administrativos y directivos pueden crear reuniones institucionales para personas, cursos, grupos o convocatorias amplias.</li>
+            <li>Las personas convocadas reciben avisos y pueden confirmar o rechazar su participación. El creador o un usuario institucional autorizado registra la asistencia real.</li>
+        </ul>
+
+        <h3>Usuarios (solo Directivo con cargo Rector)</h3>
+        <ul>
+            <li>Precarga los datos de una persona; la contraseña se define en el primer ingreso.</li>
+            <li>Asigna los roles y cargos necesarios. Para crear un preceptor, deja los roles generales sin seleccionar y le asigna al menos un curso.</li>
+            <li>Puede asignar cursos a preceptores existentes, activar o desactivar cuentas, reiniciar accesos y eliminar una cuenta. Si existe historial institucional vinculado, la eliminación se bloquea para protegerlo; en ese caso se puede desactivar la cuenta.</li>
+        </ul>
+    </section>
+
+    <section id="diferencias">
+        <h2>5. ¿Hay cargos que hacen lo mismo?</h2>
+        <p>Sí. Según los permisos implementados hoy, la mayoría de los cargos no produce una diferencia funcional entre sí. Por ejemplo, Rector, Vicerrector, Regentes, Secretarios, Coordinadores y Jefes de Preceptoría aparecen como responsabilidades institucionales, pero salvo Rector no tienen una pantalla propia o permisos diferenciados. Su rol general es el que determina el acceso a trámites, reuniones y otras secciones.</p>
+        <p>Por eso, actualmente Administrativo y Directivo realizan las mismas tareas de gestión. El cargo Rector agrega la administración de usuarios cuando está combinado con Directivo. Preceptor y Encargado de Espacio sí tienen módulos y restricciones específicas.</p>
+        <div class="callout amber">
+            <strong>Conclusión para el manual:</strong> no se debe prometer que un cargo de Jefe, Regente, Secretario o Coordinador pueda supervisar o aprobar tareas de su área desde TurnOK, porque esa función todavía no está implementada. Para que los cargos tengan diferencias reales, primero hay que definir qué acciones específicas debe hacer cada uno; después se pueden reflejar en permisos y pantallas. La cantidad de cargos del organigrama puede mantenerse, pero no todos necesitan ser permisos diferentes.
+        </div>
+        <p class="muted">Los permisos pueden combinarse cuando una cuenta tiene más de un rol o cargo, salvo las restricciones especiales de Preceptor y Encargado de Espacio. La cuenta siempre debe usar únicamente las funciones correspondientes a sus responsabilidades asignadas.</p>
+    </section>
+
+    <footer>TurnOK · Manual de usuario basado en las funciones actuales de la aplicación.</footer>
+</main>
+</body>
+</html>

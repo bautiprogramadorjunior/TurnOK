@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TurnOK | Tablas y relaciones de la base de datos</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --ink: #17243b;
+            --muted: #5e6d82;
+            --line: #dce4ee;
+            --paper: #ffffff;
+            --canvas: #f3f6fb;
+            --blue: #2865bd;
+            --blue-pale: #eaf2ff;
+            --green: #15815f;
+            --green-pale: #e8f7f0;
+            --amber: #a5660a;
+            --amber-pale: #fff4df;
+            --violet: #7246a8;
+            --violet-pale: #f2ebfc;
+            --slate: #506176;
+            --slate-pale: #edf1f5;
+        }
+
+        * { box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            margin: 0;
+            background: var(--canvas);
+            color: var(--ink);
+            font: 15px/1.55 "Segoe UI", Arial, sans-serif;
+        }
+        .page { width: min(1120px, calc(100% - 36px)); margin: 32px auto 56px; }
+        .hero {
+            padding: 42px 46px;
+            border-radius: 22px;
+            background: linear-gradient(125deg, #122744, #20549a);
+            color: #fff;
+            box-shadow: 0 14px 40px #18395b24;
+        }
+        .eyebrow { margin: 0 0 8px; color: #c4dcff; font-size: 12px; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }
+        h1 { max-width: 780px; margin: 0; font-size: clamp(30px, 5vw, 46px); line-height: 1.12; letter-spacing: -.03em; }
+        .hero p { max-width: 780px; margin: 16px 0 0; color: #e1ecfa; font-size: 17px; }
+        .hero-meta { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 24px; }
+        .hero-meta span { padding: 6px 11px; border: 1px solid #ffffff35; border-radius: 99px; color: #eff6ff; font-size: 13px; }
+        .toolbar { display: flex; flex-wrap: wrap; gap: 10px; margin: 18px 0 28px; }
+        .toolbar a, .toolbar button {
+            display: inline-block;
+            padding: 9px 13px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--paper);
+            color: #214d86;
+            font: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .toolbar a:hover, .toolbar button:hover { background: #edf4ff; }
+        section { margin-top: 30px; }
+        .section-heading { margin-bottom: 16px; }
+        .section-heading h2 { margin: 0; font-size: 25px; letter-spacing: -.02em; }
+        .section-heading p { margin: 4px 0 0; color: var(--muted); }
+        .panel {
+            padding: 24px;
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            background: var(--paper);
+            box-shadow: 0 5px 18px #18395b08;
+        }
+        .modules { display: grid; gap: 15px; }
+        .module {
+            padding: 18px;
+            border: 1px solid var(--line);
+            border-left: 5px solid var(--blue);
+            border-radius: 13px;
+            background: #fbfdff;
+        }
+        .module.green { border-left-color: var(--green); }
+        .module.amber { border-left-color: var(--amber); }
+        .module.violet { border-left-color: var(--violet); }
+        .module.slate { border-left-color: var(--slate); }
+        .module h3 { margin: 0 0 11px; font-size: 17px; }
+        .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .node {
+            display: inline-flex;
+            flex-direction: column;
+            min-width: 120px;
+            padding: 8px 11px;
+            border: 1px solid #c8d9f2;
+            border-radius: 9px;
+            background: var(--blue-pale);
+        }
+        .green .node { border-color: #b8dfd0; background: var(--green-pale); }
+        .amber .node { border-color: #f0d9ad; background: var(--amber-pale); }
+        .violet .node { border-color: #d8c8ef; background: var(--violet-pale); }
+        .slate .node { border-color: #d2dbe5; background: var(--slate-pale); }
+        .node strong { font: 700 13px/1.35 Consolas, "Courier New", monospace; }
+        .node small { color: var(--muted); font-size: 11px; }
+        .connector { color: #5b7190; font-weight: 800; white-space: nowrap; }
+        .relation-note { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+        .shared {
+            margin-top: 15px;
+            padding: 14px 16px;
+            border: 1px solid #bfd0e5;
+            border-radius: 12px;
+            background: #f1f6fc;
+        }
+        .shared strong { color: #214d86; }
+        .legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+        .legend b { color: var(--ink); }
+        .legend-item { display: inline-flex; align-items: center; gap: 7px; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--blue); }
+        .legend-dot.green { background: var(--green); }
+        .legend-dot.amber { background: var(--amber); }
+        .legend-dot.violet { background: var(--violet); }
+        .legend-dot.slate { background: var(--slate); }
+        .module-catalog { display: grid; gap: 20px; }
+        .catalog-section {
+            overflow: hidden;
+            border: 1px solid var(--line);
+            border-radius: 15px;
+            background: var(--paper);
+            box-shadow: 0 5px 18px #18395b08;
+        }
+        .catalog-section h3 { margin: 0; padding: 15px 19px; background: #eaf2ff; color: #214d86; font-size: 16px; }
+        .catalog-section.green h3 { background: var(--green-pale); color: #12664d; }
+        .catalog-section.amber h3 { background: var(--amber-pale); color: #805008; }
+        .catalog-section.violet h3 { background: var(--violet-pale); color: #603a91; }
+        .catalog-section.slate h3 { background: var(--slate-pale); color: #43546a; }
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 11px 15px; border-top: 1px solid #e8edf3; text-align: left; vertical-align: top; }
+        th { background: #fbfcfe; color: #52647b; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+        td { font-size: 13px; }
+        td:first-child { min-width: 175px; }
+        code { padding: 2px 5px; border-radius: 5px; background: #f0f3f7; color: #253b59; font: 12px Consolas, "Courier New", monospace; overflow-wrap: anywhere; }
+        .key { color: #1f5ca5; font-weight: 800; }
+        .foreign { color: #79500d; font-weight: 700; }
+        .no-fk { color: #748194; }
+        .relationship-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 13px; }
+        .relationship {
+            padding: 15px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: #fbfdff;
+        }
+        .relationship h3 { margin: 0 0 8px; font-size: 15px; }
+        .relationship p { margin: 0; color: var(--muted); font-size: 13px; }
+        .relationship + .relationship {}
+        .callout {
+            margin-top: 16px;
+            padding: 15px 17px;
+            border: 1px solid #f0d9ad;
+            border-radius: 11px;
+            background: #fff9ed;
+            color: #634815;
+            font-size: 13px;
+        }
+        .callout strong { color: #4f390f; }
+        .footer { margin-top: 28px; padding: 18px 4px; color: var(--muted); font-size: 12px; text-align: center; }
+        @media (max-width: 700px) {
+            .page { width: min(100% - 22px, 1120px); margin-top: 12px; }
+            .hero { padding: 29px 23px; border-radius: 15px; }
+            .panel { padding: 16px; }
+            .relationship-grid { grid-template-columns: 1fr; }
+            th, td { padding: 9px 10px; }
+        }
+        @media print {
+            @page { size: A4; margin: 14mm; }
+            body { background: #fff; font-size: 11px; }
+            .page { width: 100%; margin: 0; }
+            .hero { padding: 25px 28px; box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            .toolbar { display: none; }
+            .panel, .catalog-section, .module { box-shadow: none; break-inside: avoid; }
+            section { break-inside: auto; }
+            .relationship, tr { break-inside: avoid; }
+            .catalog-section h3, .module, .node, .shared, .callout { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            th { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+            a { color: inherit; }
+        }
+    </style>
+</head>
+<body>
+<main class="page">
+    <header class="hero">
+        <p class="eyebrow">Escuela Técnica Otto Krause · Proyecto TurnOK</p>
+        <h1>Tablas y relaciones de la base de datos</h1>
+        <p>Una guía visual para entender cómo se organiza la información del sistema: personas, cursos, espacios, trámites, reuniones y sus vínculos.</p>
+        <div class="hero-meta">
+            <span>23 tablas</span>
+            <span>MySQL / MariaDB</span>
+            <span>Fuente: database/schema.sql</span>
+        </div>
+    </header>
+
+    <nav class="toolbar" aria-label="Acciones del documento">
+        <a href="#mapa">Ver mapa</a>
+        <a href="#tablas">Ver las 23 tablas</a>
+        <a href="#relaciones">Ver relaciones explicadas</a>
+        <button type="button" onclick="window.print()">Imprimir o guardar como PDF</button>
+    </nav>
+
+    <section id="mapa">
+        <div class="section-heading">
+            <h2>1. Mapa general</h2>
+            <p>Las flechas indican el sentido de la referencia: la tabla de la izquierda guarda una clave foránea hacia la de la derecha.</p>
+        </div>
+        <div class="panel">
+            <div class="legend" aria-label="Leyenda de colores">
+                <span class="legend-item"><i class="legend-dot"></i> Usuarios y estructura escolar</span>
+                <span class="legend-item"><i class="legend-dot green"></i> Espacios</span>
+                <span class="legend-item"><i class="legend-dot amber"></i> Trámites</span>
+                <span class="legend-item"><i class="legend-dot violet"></i> Reuniones</span>
+                <span class="legend-item"><i class="legend-dot slate"></i> Sistema</span>
+            </div>
+            <div class="modules">
+                <article class="module">
+                    <h3>Personas, perfiles y cursos</h3>
+                    <div class="flow">
+                        <span class="node"><strong>roles</strong><small>perfiles del sistema</small></span>
+                        <span class="connector">↔</span>
+                        <span class="node"><strong>usuario_roles</strong><small>une persona y rol</small></span>
+                        <span class="connector">↔</span>
+                        <span class="node"><strong>usuarios</strong><small>personas registradas</small></span>
+                        <span class="connector">↔</span>
+                        <span class="node"><strong>usuario_cargos</strong><small>une persona y cargo</small></span>
+                        <span class="connector">↔</span>
+                        <span class="node"><strong>cargos</strong><small>funciones institucionales</small></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>especialidades</strong></span><span class="connector">1 → N</span>
+                        <span class="node"><strong>cursos</strong></span>
+                        <span class="connector">← N:M →</span>
+                        <span class="node"><strong>preceptor_curso</strong></span>
+                        <span class="connector">→</span>
+                        <span class="node"><strong>usuarios</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>preceptor_curso</strong><small>un preceptor por curso</small></span>
+                        <span class="connector">→ habilita</span>
+                        <span class="node"><strong>preceptoria_asistencias</strong></span>
+                        <span class="connector">y</span>
+                        <span class="node"><strong>preceptoria_observaciones</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>usuarios</strong></span><span class="connector">← 1:N →</span>
+                        <span class="node"><strong>alumno_curso</strong></span><span class="connector">← N:1 →</span>
+                        <span class="node"><strong>cursos</strong></span>
+                    </div>
+                </article>
+
+                <article class="module green">
+                    <h3>Espacios y reservas</h3>
+                    <div class="flow">
+                        <span class="node"><strong>usuarios</strong><small>profesor o encargado</small></span>
+                        <span class="connector">→ solicita</span>
+                        <span class="node"><strong>solicitudes_espacios</strong></span>
+                        <span class="connector">← pertenece a</span>
+                        <span class="node"><strong>espacios</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>usuarios</strong></span><span class="connector">← N:M →</span>
+                        <span class="node"><strong>encargados_espacios</strong><small>asigna responsable y turno</small></span>
+                        <span class="connector">← N:M →</span><span class="node"><strong>espacios</strong></span>
+                    </div>
+                    <p class="relation-note">Cada reserva también apunta al usuario que la solicitó y, cuando se responde, al usuario aprobador.</p>
+                </article>
+
+                <article class="module amber">
+                    <h3>Trámites y turnos</h3>
+                    <div class="flow">
+                        <span class="node"><strong>usuarios</strong><small>solicitante / responsable</small></span>
+                        <span class="connector">→ crea</span>
+                        <span class="node"><strong>solicitudes_tramites</strong></span>
+                        <span class="connector">← clasifica</span>
+                        <span class="node"><strong>tipos_tramite</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>solicitudes_tramites</strong></span>
+                        <span class="connector">1 → N</span>
+                        <span class="node"><strong>turnos_tramites</strong></span>
+                        <span class="connector">→ asignado a</span>
+                        <span class="node"><strong>usuarios</strong><small>responsable del turno</small></span>
+                    </div>
+                </article>
+
+                <article class="module violet">
+                    <h3>Reuniones y convocatorias</h3>
+                    <div class="flow">
+                        <span class="node"><strong>usuarios</strong><small>solicitante / destinatario</small></span>
+                        <span class="connector">→</span>
+                        <span class="node"><strong>solicitudes_reuniones</strong></span>
+                        <span class="connector">← puede originar</span>
+                        <span class="node"><strong>reuniones</strong></span>
+                        <span class="connector">← clasifica</span>
+                        <span class="node"><strong>tipos_reunion</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>reuniones</strong></span><span class="connector">← N:M →</span>
+                        <span class="node"><strong>reunion_participantes</strong></span><span class="connector">← N:M →</span>
+                        <span class="node"><strong>usuarios</strong></span>
+                    </div>
+                    <div class="flow" style="margin-top:9px">
+                        <span class="node"><strong>reuniones</strong></span><span class="connector">← N:M →</span>
+                        <span class="node"><strong>reunion_cursos</strong></span><span class="connector">← N:M →</span>
+                        <span class="node"><strong>cursos</strong></span>
+                        <span class="connector">· también →</span><span class="node"><strong>reunion_grupos</strong><small>convocatoria por rol</small></span>
+                        <span class="connector">→</span><span class="node"><strong>roles</strong></span>
+                    </div>
+                </article>
+
+                <article class="module slate">
+                    <h3>Seguimiento del sistema</h3>
+                    <div class="flow">
+                        <span class="node"><strong>usuarios</strong></span><span class="connector">1 → N</span>
+                        <span class="node"><strong>notificaciones</strong><small>destinatario</small></span>
+                    </div>
+                    <p class="relation-note"><code>auditoria</code> registra acciones para seguimiento, pero el esquema no le define claves foráneas.</p>
+                </article>
+            </div>
+            <div class="shared">
+                <strong>La tabla central es <code>usuarios</code>.</strong>
+                Se relaciona con perfiles, cargos, cursos, reservas, trámites, reuniones y notificaciones. Las tablas intermedias resuelven relaciones de muchos a muchos y guardan datos propios de ese vínculo.
+            </div>
+        </div>
+    </section>
+
+    <section id="relaciones">
+        <div class="section-heading">
+            <h2>2. Cómo leer las relaciones</h2>
+            <p>Ejemplos concretos de lo que significan las claves foráneas en TurnOK.</p>
+        </div>
+        <div class="relationship-grid">
+            <article class="relationship">
+                <h3>1 a muchos (1:N)</h3>
+                <p>Un tipo de trámite puede aparecer en muchas solicitudes. Cada solicitud guarda un solo <code>tipo_tramite_id</code>. Se lee: <strong>un tipo → muchas solicitudes</strong>.</p>
+            </article>
+            <article class="relationship">
+                <h3>Muchos a muchos (N:M)</h3>
+                <p>Una persona puede tener varios roles y un rol puede asignarse a varias personas. <code>usuario_roles</code> guarda cada pareja usuario–rol y convierte esa relación en dos relaciones 1:N.</p>
+            </article>
+            <article class="relationship">
+                <h3>Relación con datos propios</h3>
+                <p><code>encargados_espacios</code> no solo une encargados y espacios: también guarda el <strong>turno</strong> y si la asignación está activa.</p>
+            </article>
+            <article class="relationship">
+                <h3>Una solicitud puede tener turnos</h3>
+                <p><code>turnos_tramites.solicitud_tramite_id</code> referencia el trámite. El esquema permite que haya más de un registro de turno asociado a una misma solicitud.</p>
+            </article>
+            <article class="relationship">
+                <h3>Convocatorias flexibles</h3>
+                <p>Una reunión puede vincular personas en <code>reunion_participantes</code>, cursos en <code>reunion_cursos</code> y grupos/roles en <code>reunion_grupos</code>.</p>
+            </article>
+            <article class="relationship">
+                <h3>Claves opcionales</h3>
+                <p>Si <code>responsable_id</code>, <code>aprobador_id</code> o <code>solicitud_id</code> aceptan <code>NULL</code>, la relación puede no estar asignada todavía o no tener solicitud de origen.</p>
+            </article>
+        </div>
+        <div class="callout">
+            <strong>Importante: claves foráneas y reglas de negocio no son lo mismo.</strong>
+            La base asegura, por ejemplo, que una solicitud de espacio apunta a un usuario existente. Que ese usuario realmente tenga rol de Profesor se valida en la aplicación; el esquema lo indica como regla, pero no crea una clave foránea especial al rol.
+        </div>
+    </section>
+
+    <section id="tablas">
+        <div class="section-heading">
+            <h2>3. Catálogo de las 25 tablas</h2>
+            <p><strong>PK</strong> = clave primaria (identifica una fila). <strong>FK</strong> = clave foránea (apunta a otra tabla).</p>
+        </div>
+        <div class="module-catalog">
+            <article class="catalog-section">
+                <h3>Personas, roles y estructura escolar · 11 tablas</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>usuarios</code></td><td>Datos de cada persona, acceso y estado de cuenta.</td><td><span class="key">PK:</span> <code>id</code>. DNI y email son únicos.</td></tr>
+                            <tr><td><code>roles</code></td><td>Perfiles generales: Alumno, Profesor, Administrativo y Directivo.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>usuario_roles</code></td><td>Asignaciones de roles a usuarios.</td><td><span class="key">PK compuesta:</span> <code>usuario_id + rol_id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>rol_id → roles.id</code>.</td></tr>
+                            <tr><td><code>cargos</code></td><td>Catálogo de cargos institucionales, como Rector o Encargado de Espacio.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>usuario_cargos</code></td><td>Cargos de cada persona, con estado y vigencia.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>cargo_id → cargos.id</code>. Par usuario–cargo único.</td></tr>
+                            <tr><td><code>especialidades</code></td><td>Especialidades técnicas, como Computación o Electrónica.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>cursos</code></td><td>División, año, turno y especialidad de cada curso.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>especialidad_id → especialidades.id</code> (opcional según el año).</td></tr>
+                            <tr><td><code>alumno_curso</code></td><td>Inscripción de un alumno en un curso por año lectivo.</td><td><span class="key">PK compuesta:</span> <code>usuario_id + anio_lectivo</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>curso_id → cursos.id</code>.</td></tr>
+                            <tr><td><code>preceptor_curso</code></td><td>Asignación de preceptores a cursos; cada curso admite uno solo.</td><td><span class="key">PK compuesta:</span> <code>usuario_id + curso_id</code>; <span class="key">UNIQUE:</span> <code>curso_id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>curso_id → cursos.id</code>.</td></tr>
+                            <tr><td><code>preceptoria_asistencias</code></td><td>Asistencia diaria de alumnos registrada por el preceptor.</td><td><span class="key">PK:</span> <code>id</code>; registro único por <code>curso_id + alumno_id + fecha</code>. <span class="foreign">FK:</span> curso y alumno → sus tablas; <code>registrado_por → usuarios.id</code>.</td></tr>
+                            <tr><td><code>preceptoria_observaciones</code></td><td>Observaciones privadas de seguimiento por alumno y curso.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>curso_id → cursos.id</code>; <code>alumno_id</code> y <code>preceptor_id → usuarios.id</code>.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="catalog-section green">
+                <h3>Espacios y reservas · 3 tablas</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>espacios</code></td><td>Catálogo de espacios físicos y disponibilidad.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>encargados_espacios</code></td><td>Asigna responsables a espacios y turnos (TM/TT).</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>espacio_id → espacios.id</code>; <code>usuario_id → usuarios.id</code>.</td></tr>
+                            <tr><td><code>solicitudes_espacios</code></td><td>Reservas solicitadas, su horario, estado y respuesta.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>espacio_id → espacios.id</code>; <code>solicitante_id → usuarios.id</code>; <code>aprobador_id → usuarios.id</code> (opcional).</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="catalog-section amber">
+                <h3>Trámites y turnos · 3 tablas</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>tipos_tramite</code></td><td>Catálogo de trámites disponibles.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>solicitudes_tramites</code></td><td>Pedido de un trámite, prioridad, estado y responsable.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>solicitante_id → usuarios.id</code>; <code>tipo_tramite_id → tipos_tramite.id</code>; <code>responsable_id → usuarios.id</code> (opcional).</td></tr>
+                            <tr><td><code>turnos_tramites</code></td><td>Fecha, hora y lugar asignados a una solicitud aprobada.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>solicitud_tramite_id → solicitudes_tramites.id</code>; <code>responsable_id → usuarios.id</code>.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="catalog-section violet">
+                <h3>Reuniones y convocatorias · 6 tablas</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>tipos_reunion</code></td><td>Clasificación: Personal, Por Curso, Varios Cursos o Masiva.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>solicitudes_reuniones</code></td><td>Solicitud de reunión de una persona a un destinatario.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>solicitante_id → usuarios.id</code>; <code>destinatario_id → usuarios.id</code>.</td></tr>
+                            <tr><td><code>reuniones</code></td><td>Evento con fecha, horario, lugar, creador y tipo.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>tipo_reunion_id → tipos_reunion.id</code>; <code>creador_id → usuarios.id</code>; <code>solicitud_id → solicitudes_reuniones.id</code> (opcional).</td></tr>
+                            <tr><td><code>reunion_participantes</code></td><td>Participación individual, confirmación y asistencia.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>reunion_id → reuniones.id</code>; <code>usuario_id → usuarios.id</code>. Pareja única.</td></tr>
+                            <tr><td><code>reunion_cursos</code></td><td>Cursos convocados a reuniones.</td><td><span class="key">PK compuesta:</span> <code>reunion_id + curso_id</code>. <span class="foreign">FK:</span> <code>reunion_id → reuniones.id</code>; <code>curso_id → cursos.id</code>.</td></tr>
+                            <tr><td><code>reunion_grupos</code></td><td>Grupos convocados, con rol opcional (por ejemplo, todos los profesores).</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>reunion_id → reuniones.id</code>; <code>rol_id → roles.id</code> (opcional).</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+
+            <article class="catalog-section slate">
+                <h3>Notificaciones y auditoría · 2 tablas</h3>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
+                        <tbody>
+                            <tr><td><code>notificaciones</code></td><td>Mensajes del sistema para cada destinatario, leídos o pendientes.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>. <code>ref_tabla</code> y <code>ref_id</code> son referencias informativas, no FK.</td></tr>
+                            <tr><td><code>auditoria</code></td><td>Historial de acciones con usuario, fecha y detalles técnicos.</td><td><span class="key">PK:</span> <code>id</code>. <span class="no-fk">Sin claves foráneas declaradas en el esquema.</span> <code>usuario_id</code> es un dato de referencia sin restricción FK.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-heading">
+            <h2>4. Reglas importantes del modelo</h2>
+            <p>Detalles que ayudan a explicar por qué algunas relaciones están diseñadas de esta manera.</p>
+        </div>
+        <div class="panel">
+            <ul style="margin:0;padding-left:21px">
+                <li><code>usuarios</code> guarda los datos comunes; los roles y cargos se almacenan por separado. Preceptoría se habilita mediante el cargo y cada curso admite un solo preceptor asignado.</li>
+                <li><code>usuario_roles</code> y <code>usuario_cargos</code> son tablas de unión: representan relaciones muchos a muchos.</li>
+                <li><code>alumno_curso</code> incluye el año lectivo, así el curso de un alumno puede cambiar de un año al siguiente.</li>
+                <li>Las reuniones pueden convocar personas, cursos o grupos; por eso existen tres tablas de relación diferentes.</li>
+                <li>Los campos <code>activo</code>, fechas de vigencia y estados permiten conservar registros históricos sin borrarlos.</li>
+                <li>El esquema no declara una tabla independiente de sesión: el inicio de sesión usa los registros de <code>usuarios</code>.</li>
+            </ul>
+        </div>
+    </section>
+
+    <footer class="footer">
+        Documento generado a partir de la estructura de <code>database/schema.sql</code> del proyecto TurnOK. Las claves listadas reflejan las relaciones declaradas en el esquema.
+    </footer>
+</main>
+</body>
+</html>
