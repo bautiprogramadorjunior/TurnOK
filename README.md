@@ -38,6 +38,8 @@ Sistema web institucional para la Escuela Técnica Otto Krause, construido con H
 
 El esquema actual incluye las tablas para Preceptoría. **No ejecutar** `database/preceptoria_migration.sql` en una base recién creada con `schema.sql`: esa migración es únicamente para actualizar una base TurnOK preexistente que todavía no tenga esas tablas y restricciones, y se ejecuta una sola vez.
 
+En una base existente, importar una sola vez `database/administrativo_a_directivo_migration.sql` para convertir las asignaciones del rol Administrativo a Directivo. Esta conversión también da a esas cuentas los permisos operativos de Directivo. El cargo Rector sigue siendo necesario para administrar usuarios.
+
 ## Cuentas de demostración
 
 Solo existen al importar `database/seed_demo.sql`.
@@ -45,8 +47,8 @@ Son cuentas y datos ficticios para pruebas locales; el script contiene una contr
 
 | Perfil | DNI | Contraseña |
 |---|---:|---|
-| Directivo | 30111222 | `TurnOK2026!` |
-| Administrativo | 33111222 | `TurnOK2026!` |
+| Directivo (Rector) | 30111222 | `TurnOK2026!` |
+| Directivo (Secretario) | 33111222 | `TurnOK2026!` |
 | Profesor | 35111222 | `TurnOK2026!` |
 | Encargado de espacio | 40111222 | `TurnOK2026!` |
 | Alumno | 45111222 | `TurnOK2026!` |
@@ -72,6 +74,7 @@ El perfil de encargado de espacio solo puede gestionar reservas; no tiene acceso
 - `includes/`: autenticación, utilidades y plantilla.
 - `database/`: esquema original y datos de demostración.
 - `database/preceptoria_migration.sql`: actualización de la base existente para las funciones de preceptoría.
+- `database/administrativo_a_directivo_migration.sql`: conversión del antiguo rol Administrativo a Directivo en bases existentes.
 
 ## Seguridad y producción
 

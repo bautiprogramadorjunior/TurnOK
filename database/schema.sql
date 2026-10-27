@@ -14,7 +14,7 @@ SET CHARACTER SET utf8mb4;
 -- ============================================================
 
 -- Tabla: roles
--- Almacena los roles generales del sistema (Alumno, Profesor, Administrativo, Directivo).
+-- Almacena los roles generales del sistema (Alumno, Profesor y Directivo).
 -- Separada de los cargos para permitir que una persona tenga múltiples roles.
 CREATE TABLE roles (
     id         INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -27,7 +27,6 @@ CREATE TABLE roles (
 INSERT INTO roles (nombre, descripcion) VALUES
 ('Alumno',         'Estudiante inscripto en la institución'),
 ('Profesor',       'Docente de la institución'),
-('Administrativo', 'Personal administrativo'),
 ('Directivo',      'Personal directivo y jerárquico');
 
 -- Tabla: cargos
@@ -304,7 +303,7 @@ CREATE TABLE solicitudes_tramites (
     prioridad        ENUM('Baja','Normal','Alta') NOT NULL DEFAULT 'Normal',
     estado           ENUM('Pendiente','Aprobado','Rechazado','Finalizado') NOT NULL DEFAULT 'Pendiente',
     fecha_solicitud  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    responsable_id   INT UNSIGNED NULL COMMENT 'Administrativo o directivo asignado',
+    responsable_id   INT UNSIGNED NULL COMMENT 'Directivo asignado',
     comentarios      TEXT NULL,
     updated_at       DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     CONSTRAINT fk_soltram_solicitante  FOREIGN KEY (solicitante_id)  REFERENCES usuarios(id) ON UPDATE CASCADE ON DELETE RESTRICT,

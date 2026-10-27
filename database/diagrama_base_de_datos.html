@@ -379,7 +379,7 @@
                         <thead><tr><th>Tabla</th><th>Para qué sirve</th><th>Clave principal y referencias</th></tr></thead>
                         <tbody>
                             <tr><td><code>usuarios</code></td><td>Datos de cada persona, acceso y estado de cuenta.</td><td><span class="key">PK:</span> <code>id</code>. DNI y email son únicos.</td></tr>
-                            <tr><td><code>roles</code></td><td>Perfiles generales: Alumno, Profesor, Administrativo y Directivo.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
+                            <tr><td><code>roles</code></td><td>Perfiles generales: Alumno, Profesor y Directivo.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
                             <tr><td><code>usuario_roles</code></td><td>Asignaciones de roles a usuarios.</td><td><span class="key">PK compuesta:</span> <code>usuario_id + rol_id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>rol_id → roles.id</code>.</td></tr>
                             <tr><td><code>cargos</code></td><td>Catálogo de cargos institucionales, como Rector o Encargado de Espacio.</td><td><span class="key">PK:</span> <code>id</code>. Nombre único.</td></tr>
                             <tr><td><code>usuario_cargos</code></td><td>Cargos de cada persona, con estado y vigencia.</td><td><span class="key">PK:</span> <code>id</code>. <span class="foreign">FK:</span> <code>usuario_id → usuarios.id</code>; <code>cargo_id → cargos.id</code>. Par usuario–cargo único.</td></tr>

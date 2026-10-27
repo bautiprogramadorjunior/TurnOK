@@ -255,15 +255,6 @@
                         <td>Solo puede cancelar sus propias solicitudes de espacio mientras estén pendientes. No aprueba reservas salvo que también tenga permisos institucionales aplicables.</td>
                     </tr>
                     <tr>
-                        <td>Administrativo</td>
-                        <td>
-                            <span class="badge amber">Gestionar trámites</span>
-                            <span class="badge violet">Crear reuniones institucionales</span>
-                            <span class="badge green">Consultar espacios</span>
-                        </td>
-                        <td>No puede precargar usuarios, asignar roles ni cargos. La gestión de espacios se realiza conforme a los permisos institucionales existentes; el cargo de encargado queda restringido como se describe abajo.</td>
-                    </tr>
-                    <tr>
                         <td>Directivo</td>
                         <td>
                             <span class="badge amber">Gestionar trámites</span>
@@ -271,7 +262,7 @@
                             <span class="badge">Administrar usuarios (solo Rector)</span>
                             <span class="badge green">Consultar espacios</span>
                         </td>
-                        <td>Las funciones operativas son las mismas que las del perfil Administrativo. La administración de usuarios se habilita solo si tiene el cargo activo de Rector; debe conservarse al menos un Rector activo.</td>
+                        <td>Es el único rol general con permisos de gestión institucional. La administración de usuarios se habilita solo si tiene el cargo activo de Rector; debe conservarse al menos un Rector activo.</td>
                     </tr>
                     <tr>
                         <td>Preceptor</td>
@@ -302,7 +293,7 @@
             </table>
         </div>
         <div class="callout">
-            <strong>Nota sobre combinaciones:</strong> una persona puede tener varios roles y cargos, pero algunos cargos tienen restricciones propias. “Preceptor” usa un módulo separado y no habilita los módulos generales. “Encargado de Espacio” limita la cuenta a la gestión de espacios. El cargo Rector habilita la administración de usuarios únicamente combinado con el rol Directivo. La mayoría de los otros cargos identifica una función institucional, pero no agrega permisos específicos en la aplicación actual; ver el <a href="MANUAL_USUARIO.html">manual de usuario</a>.
+            <strong>Nota sobre combinaciones:</strong> una persona puede tener varios roles y cargos, pero algunos cargos tienen restricciones propias. “Preceptor” usa un módulo separado y no habilita los módulos generales. “Encargado de Espacio” limita la cuenta a la gestión de espacios. El cargo Rector habilita la administración de usuarios únicamente combinado con el rol Directivo. El rol Administrativo fue retirado; el personal administrativo que gestione trámites o reuniones debe recibir el rol Directivo. La mayoría de los otros cargos identifica una función institucional, pero no agrega permisos específicos en la aplicación actual; ver el <a href="MANUAL_USUARIO.html">manual de usuario</a>.
         </div>
     </section>
 
@@ -322,7 +313,7 @@
             </article>
             <article class="tile amber">
                 <h3>Trámites</h3>
-                <p>Alumnos y profesores crean solicitudes seleccionando un tipo, describiendo el motivo y eligiendo prioridad. Administrativos y directivos revisan solicitudes, asignan responsable, estado, comentarios y, si corresponde, un turno.</p>
+                <p>Alumnos y profesores crean solicitudes seleccionando un tipo, describiendo el motivo y eligiendo prioridad. Los Directivos revisan solicitudes, asignan responsable, estado, comentarios y, si corresponde, un turno.</p>
             </article>
             <article class="tile green">
                 <h3>Espacios</h3>
@@ -334,7 +325,7 @@
             </article>
             <article class="tile violet">
                 <h3>Reuniones</h3>
-                <p>Alumnos y profesores pueden solicitar reuniones a personas con cargos institucionales. Administrativos/directivos crean reuniones institucionales de tipo personal, por curso, para varios cursos o masivas.</p>
+                <p>Alumnos y profesores pueden solicitar reuniones a personas con cargos institucionales. Los Directivos crean reuniones institucionales de tipo personal, por curso, para varios cursos o masivas.</p>
             </article>
             <article class="tile violet">
                 <h3>Participación y asistencia</h3>
@@ -346,7 +337,7 @@
             </article>
             <article class="tile">
                 <h3>Usuarios</h3>
-                <p>Solo un Directivo con cargo activo de Rector puede precargar usuarios, asignar roles y cargos, asignar a preceptores sus cursos, y vincular cursos y espacios a los cargos correspondientes. También puede activar/desactivar cuentas, reiniciar accesos y eliminar cuentas sin historial institucional protegido. Los perfiles Administrativos no acceden a esta administración.</p>
+                <p>Solo un Directivo con cargo activo de Rector puede precargar usuarios, asignar roles y cargos, asignar a preceptores sus cursos, y vincular cursos y espacios a los cargos correspondientes. También puede activar/desactivar cuentas, reiniciar accesos y eliminar cuentas sin historial institucional protegido.</p>
             </article>
             <article class="tile">
                 <h3>Perfil</h3>
@@ -370,7 +361,7 @@
                 <div class="steps">
                     <div class="step"><strong>Ingreso</strong><span>El usuario inicia sesión con su DNI y contraseña; el sistema reconoce su perfil.</span></div>
                     <div class="step"><strong>Creación</strong><span>Alumno o profesor selecciona el tipo, explica el motivo y define una prioridad.</span></div>
-                    <div class="step"><strong>Revisión institucional</strong><span>Administrativo o directivo consulta la solicitud, asigna un responsable y actualiza su estado.</span></div>
+                    <div class="step"><strong>Revisión institucional</strong><span>Un usuario con rol Directivo consulta la solicitud, asigna un responsable y actualiza su estado.</span></div>
                     <div class="step"><strong>Turno opcional</strong><span>Al aprobar, puede indicar fecha, hora y lugar del turno.</span></div>
                     <div class="step"><strong>Seguimiento</strong><span>El solicitante consulta el estado, los comentarios, el responsable y el turno asignado; recibe notificaciones de aprobación o rechazo.</span></div>
                 </div>
@@ -398,7 +389,7 @@
             <article class="card">
                 <h3 style="margin-top:0">D. Reunión institucional</h3>
                 <div class="steps">
-                    <div class="step"><strong>Creación</strong><span>Un administrativo o directivo completa título, tipo, fecha, horario y lugar.</span></div>
+                    <div class="step"><strong>Creación</strong><span>Un usuario con rol Directivo completa título, tipo, fecha, horario y lugar.</span></div>
                     <div class="step"><strong>Selección del público</strong><span>Según el tipo, selecciona personas, uno o más cursos, o roles/grupos convocados.</span></div>
                     <div class="step"><strong>Convocatoria</strong><span>La reunión y sus participantes/segmentos quedan guardados para consulta.</span></div>
                     <div class="step"><strong>Confirmación</strong><span>Los participantes individuales registran si asistirán o no.</span></div>
@@ -417,7 +408,7 @@
             <ul class="rule-list">
                 <li><strong>Identificación:</strong> el DNI debe corresponder a una cuenta precargada y activa. La contraseña inicial debe tener al menos 8 caracteres, mayúscula, minúscula y número.</li>
                 <li><strong>Trámites:</strong> la solicitud requiere un tipo activo y un motivo de al menos 10 caracteres. Las prioridades permitidas son Baja, Normal y Alta.</li>
-                <li><strong>Estados de trámite:</strong> Pendiente, Aprobado, Rechazado y Finalizado. El responsable debe tener rol Administrativo o Directivo.</li>
+                <li><strong>Estados de trámite:</strong> Pendiente, Aprobado, Rechazado y Finalizado. El responsable debe tener rol Directivo.</li>
                 <li><strong>Turnos:</strong> para asignarlos se necesitan fecha, hora y lugar válidos. Se pueden actualizar cuando ya existía uno para la solicitud.</li>
                 <li><strong>Reservas:</strong> solo profesores pueden crear y cancelar sus solicitudes. La fecha no puede estar en el pasado; la hora de fin debe ser posterior a la de inicio y el motivo debe tener al menos 10 caracteres.</li>
                 <li><strong>Turno de espacio:</strong> las solicitudes con inicio antes de las 13:30 corresponden a TM; las de inicio desde las 13:30 corresponden a TT. El encargado solo puede responder espacios y turnos que tenga asignados.</li>

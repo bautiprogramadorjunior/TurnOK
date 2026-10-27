@@ -107,20 +107,15 @@
                         <td>No aprueba reservas de otros profesores por ser profesor. Para responder reservas de un espacio hace falta el cargo y la asignación de encargado correspondientes, o permiso de gestión institucional.</td>
                     </tr>
                     <tr>
-                        <td>Administrativo</td>
-                        <td>Revisar y gestionar los trámites institucionales; asignar responsables, actualizar estados y comentarios y, cuando corresponda, asignar un turno. Puede crear reuniones institucionales y consultar reuniones y espacios desde la vista institucional.</td>
-                        <td>No puede administrar cuentas, asignar roles ni cargos desde Usuarios.</td>
-                    </tr>
-                    <tr>
                         <td>Directivo</td>
-                        <td>En la aplicación actual comparte las funciones operativas del rol Administrativo: gestión de trámites y creación de reuniones institucionales.</td>
-                        <td>El rol Directivo solo no habilita la gestión de usuarios. Para esa tarea también necesita el cargo activo de Rector.</td>
+                        <td>Gestionar trámites institucionales, asignar responsables, actualizar estados y comentarios, asignar turnos, crear reuniones institucionales y consultar reuniones y espacios desde la vista institucional.</td>
+                        <td>Para administrar usuarios, asignar roles y cargos y gestionar las cuentas necesita también el cargo activo de Rector.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         <div class="callout amber">
-            <strong>Importante:</strong> Administrativo y Directivo hoy tienen prácticamente los mismos permisos operativos. La diferencia concreta implementada es que un Directivo con cargo de Rector puede administrar usuarios. No hay todavía una separación de trámites o reuniones por jerarquía.
+            <strong>Importante:</strong> TurnOK usa un solo rol general para la gestión institucional: Directivo. El cargo Rector añade la administración de usuarios; el resto de los cargos no sustituye un rol general.
         </div>
     </section>
 
@@ -159,7 +154,7 @@
             </table>
         </div>
         <div class="callout green">
-            Para que un cargo que recibe solicitudes pueda responderlas en la sección Reuniones, la cuenta también debe tener un rol que permita abrir ese módulo (Alumno, Profesor, Administrativo o Directivo). Preceptor y Encargado de Espacio tienen acceso restringido a sus módulos específicos.
+            Para que un cargo que recibe solicitudes pueda responderlas en la sección Reuniones, la cuenta también debe tener un rol que permita abrir ese módulo (Alumno, Profesor o Directivo). Preceptor y Encargado de Espacio tienen acceso restringido a sus módulos específicos.
         </div>
     </section>
 
@@ -168,7 +163,7 @@
         <h3>Trámites</h3>
         <ul>
             <li>Alumnos y profesores eligen el tipo, describen el motivo y seleccionan la prioridad antes de enviar.</li>
-            <li>Quien solicita ve sus propios trámites y su estado. Administrativos y directivos ven la gestión institucional, pueden asignar un responsable, actualizar el estado y dejar comentarios.</li>
+            <li>Quien solicita ve sus propios trámites y su estado. Los Directivos ven la gestión institucional, pueden asignar un responsable, actualizar el estado y dejar comentarios.</li>
             <li>Al aprobar, se puede cargar fecha, hora y lugar de un turno. Las novedades se envían a la persona solicitante.</li>
         </ul>
 
@@ -176,7 +171,7 @@
         <ul>
             <li>El profesor selecciona un espacio disponible, una fecha, un horario y explica el motivo. Puede cancelar su solicitud si todavía está pendiente.</li>
             <li>El encargado consulta y responde las solicitudes correspondientes al espacio y turno asignados. Antes de aprobar, se controla que no se superponga otra reserva aprobada.</li>
-            <li>Administrativos y directivos pueden consultar y gestionar reservas institucionalmente.</li>
+            <li>Los Directivos pueden consultar y gestionar reservas institucionalmente.</li>
         </ul>
 
         <h3>Preceptoría</h3>
@@ -190,7 +185,7 @@
         <ul>
             <li>Alumnos y profesores solicitan una reunión a una persona que tenga un cargo activo, explicando el motivo.</li>
             <li>La persona destinataria responde la solicitud. Si la acepta, completa título, fecha, horario y lugar; si la rechaza, indica un motivo.</li>
-            <li>Administrativos y directivos pueden crear reuniones institucionales para personas, cursos, grupos o convocatorias amplias.</li>
+            <li>Los Directivos pueden crear reuniones institucionales para personas, cursos, grupos o convocatorias amplias.</li>
             <li>Las personas convocadas reciben avisos y pueden confirmar o rechazar su participación. El creador o un usuario institucional autorizado registra la asistencia real.</li>
         </ul>
 
@@ -205,8 +200,8 @@
 
     <section id="diferencias">
         <h2>5. ¿Hay cargos que hacen lo mismo?</h2>
-        <p>Sí. Según los permisos implementados hoy, la mayoría de los cargos no produce una diferencia funcional entre sí. Por ejemplo, Rector, Vicerrector, Regentes, Secretarios, Coordinadores y Jefes de Preceptoría aparecen como responsabilidades institucionales, pero salvo Rector no tienen una pantalla propia o permisos diferenciados. Su rol general es el que determina el acceso a trámites, reuniones y otras secciones.</p>
-        <p>Por eso, actualmente Administrativo y Directivo realizan las mismas tareas de gestión. El cargo Rector agrega la administración de usuarios cuando está combinado con Directivo. Preceptor y Encargado de Espacio sí tienen módulos y restricciones específicas.</p>
+        <p>TurnOK usa el rol Directivo para las tareas generales de gestión institucional; el rol Administrativo se retiró para evitar duplicar esos permisos. El personal administrativo que necesite gestionar trámites y reuniones debe recibir el rol Directivo. El cargo Rector agrega la administración de usuarios cuando está combinado con Directivo.</p>
+        <p>La mayoría de los cargos —como Vicerrector, Regentes, Secretarios, Coordinadores y Jefes de Preceptoría— identifica responsabilidades institucionales, pero no tiene todavía una pantalla propia ni permisos diferenciados. Preceptor y Encargado de Espacio sí tienen módulos y restricciones específicas.</p>
         <div class="callout amber">
             <strong>Conclusión para el manual:</strong> no se debe prometer que un cargo de Jefe, Regente, Secretario o Coordinador pueda supervisar o aprobar tareas de su área desde TurnOK, porque esa función todavía no está implementada. Para que los cargos tengan diferencias reales, primero hay que definir qué acciones específicas debe hacer cada uno; después se pueden reflejar en permisos y pantallas. La cantidad de cargos del organigrama puede mantenerse, pero no todos necesitan ser permisos diferentes.
         </div>

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
-$user = require_roles(['Alumno', 'Profesor', 'Administrativo', 'Directivo']);
+$user = require_roles(['Alumno', 'Profesor', 'Directivo']);
 $pdo = db();
 $userId = (int) $user['id'];
 $isRequester = has_any_role(['Alumno', 'Profesor']);
@@ -74,11 +74,11 @@ if (is_post()) {
                 "SELECT COUNT(*) FROM usuario_roles ur
                  JOIN roles r ON r.id = ur.rol_id
                  JOIN usuarios u ON u.id = ur.usuario_id AND u.activo = 1
-                 WHERE ur.usuario_id = ? AND r.nombre IN ('Administrativo','Directivo')"
+                 WHERE ur.usuario_id = ? AND r.nombre = 'Directivo'"
             );
             $responsibleCheck->execute([$responsibleId]);
             if (!(int) $responsibleCheck->fetchColumn()) {
-                throw new RuntimeException('El responsable debe ser administrativo o directivo.');
+                throw new RuntimeException('El responsable debe tener el rol Directivo.');
             }
 
             $update = $pdo->prepare(
@@ -140,7 +140,7 @@ if ($isManager) {
          FROM usuarios u
          JOIN usuario_roles ur ON ur.usuario_id = u.id
          JOIN roles r ON r.id = ur.rol_id
-         WHERE u.activo = 1 AND r.nombre IN ('Administrativo','Directivo')
+         WHERE u.activo = 1 AND r.nombre = 'Directivo'
          ORDER BY u.apellido, u.nombre"
     )->fetchAll();
 }
@@ -222,7 +222,7 @@ require __DIR__ . '/includes/header.php';
 
 <?php if ($isRequester): ?>
 <dialog class="modal" id="newTramite" <?= ($_GET['action'] ?? '') === 'new' ? 'data-auto-open' : '' ?>>
-    <header class="modal-header"><div><h3>Solicitar un trámite</h3><p>La solicitud será enviada al equipo administrativo.</p></div><button class="modal-close" type="button" data-dialog-close><?= icon('x', 18) ?></button></header>
+    <header class="modal-header"><div><h3>Solicitar un trámite</h3><p>La solicitud será enviada al equipo directivo.</p></div><button class="modal-close" type="button" data-dialog-close><?= icon('x', 18) ?></button></header>
     <form method="post" class="modal-body">
         <?= csrf_field() ?><input type="hidden" name="action" value="create">
         <div class="form-grid">

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/includes/bootstrap.php';
-$user = require_roles(['Alumno', 'Profesor', 'Administrativo', 'Directivo']);
+$user = require_roles(['Alumno', 'Profesor', 'Directivo']);
 $pdo = db();
 $userId = (int) $user['id'];
 $isRequester = has_any_role(['Alumno', 'Profesor']);
@@ -132,7 +132,7 @@ if (is_post()) {
             }
         } elseif ($action === 'create_meeting') {
             if (!$isManager) {
-                throw new RuntimeException('Solo administrativos y directivos pueden crear reuniones institucionales.');
+                throw new RuntimeException('Solo los usuarios con rol Directivo pueden crear reuniones institucionales.');
             }
 
             $title = post_string('titulo');

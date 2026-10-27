@@ -22,7 +22,7 @@ SET @demo_hash = '$2y$12$Yn8APrue/m3lmQqIDlT84eK0Uv4CdL0onbv.hIl8rnvnJGIWQqp62';
 INSERT IGNORE INTO usuarios (dni, nombre, apellido, email, telefono, password_hash, registro_completo, fecha_registro)
 VALUES
 ('30111222', 'Marina', 'Directiva', 'directivo@turnok.edu.ar', '1111111111', @demo_hash, 1, NOW()),
-('33111222', 'Pablo', 'Administrativo', 'administrativo@turnok.edu.ar', '1122222222', @demo_hash, 1, NOW()),
+('33111222', 'Pablo', 'Directivo', 'directivo2@turnok.edu.ar', '1122222222', @demo_hash, 1, NOW()),
 ('35111222', 'Laura', 'Profesora', 'profesor@turnok.edu.ar', '1133333333', @demo_hash, 1, NOW()),
 ('40111222', 'Diego', 'Encargado', 'encargado@turnok.edu.ar', '1144444444', @demo_hash, 1, NOW()),
 ('45111222', 'Ian', 'Alumno', 'alumno@turnok.edu.ar', '1155555555', @demo_hash, 1, NOW());
@@ -30,13 +30,9 @@ VALUES
 INSERT IGNORE INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id FROM usuarios u JOIN roles r ON r.nombre = 'Directivo' WHERE u.dni = '30111222';
 INSERT IGNORE INTO usuario_roles (usuario_id, rol_id)
-SELECT u.id, r.id FROM usuarios u JOIN roles r ON r.nombre = 'Administrativo' WHERE u.dni = '33111222';
+SELECT u.id, r.id FROM usuarios u JOIN roles r ON r.nombre = 'Directivo' WHERE u.dni = '33111222';
 INSERT IGNORE INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id FROM usuarios u JOIN roles r ON r.nombre = 'Profesor' WHERE u.dni = '35111222';
-DELETE ur FROM usuario_roles ur
-JOIN usuarios u ON u.id = ur.usuario_id
-JOIN roles r ON r.id = ur.rol_id
-WHERE u.dni = '40111222' AND r.nombre = 'Administrativo';
 INSERT IGNORE INTO usuario_roles (usuario_id, rol_id)
 SELECT u.id, r.id FROM usuarios u JOIN roles r ON r.nombre = 'Alumno' WHERE u.dni = '45111222';
 

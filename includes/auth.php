@@ -92,7 +92,7 @@ function is_space_manager_only(): bool
 
 function can_manage_institution(): bool
 {
-    return !is_space_manager_only() && !has_cargo('Preceptor') && has_any_role(['Administrativo', 'Directivo']);
+    return !is_space_manager_only() && !has_cargo('Preceptor') && has_role('Directivo');
 }
 
 function can_manage_users(): bool
