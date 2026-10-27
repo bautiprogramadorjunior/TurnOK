@@ -67,6 +67,7 @@ El perfil de encargado de espacio solo puede gestionar reservas; no tiene acceso
 - `notificaciones.php`: bandeja de novedades.
 - `usuarios.php`: administración institucional de usuarios y cursos de preceptoría, reservada a Directivos con cargo de Rector.
 - `perfil.php`: información y seguridad de la cuenta.
+- Al precargar una cuenta se puede asignar un rol general, un cargo institucional, o ambos. Una cuenta solo con cargo se crea sin funciones generales; solo tendrá acceso a las funciones que ese cargo habilite en TurnOK.
 - `config/`: configuración de aplicación y base de datos.
 - `includes/`: autenticación, utilidades y plantilla.
 - `database/`: esquema original y datos de demostración.
