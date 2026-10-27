@@ -164,7 +164,6 @@ if (!$isManager) {
         $parts[] = "EXISTS (
             SELECT 1 FROM encargados_espacios ee
             WHERE ee.espacio_id = se.espacio_id AND ee.usuario_id = :encargado AND ee.activo = 1
-              AND ee.turno = CASE WHEN se.hora_inicio < '13:30:00' THEN 'TM' ELSE 'TT' END
         )";
         $params['encargado'] = $userId;
     }
@@ -195,7 +194,7 @@ $activePage = 'espacios';
 require __DIR__ . '/includes/header.php';
 ?>
 <section class="page-header">
-    <div><h2><?= ($isManager || $isAssignedManager) ? 'Reservas de espacios' : 'Mis reservas' ?></h2><p><?= ($isManager || $isAssignedManager) ? 'Aprobá solicitudes según el espacio y el turno asignado.' : 'Reservá espacios disponibles para actividades docentes.' ?></p></div>
+    <div><h2><?= ($isManager || $isAssignedManager) ? 'Reservas de espacios' : 'Mis reservas' ?></h2><p><?= ($isManager || $isAssignedManager) ? 'Consultá las reservas de tus espacios asignados. La aprobación depende del turno asignado.' : 'Reservá espacios disponibles para actividades docentes.' ?></p></div>
     <div class="page-actions"><?php if ($isProfessor): ?><button class="btn btn-primary" type="button" data-dialog-open="newSpaceRequest"><?= icon('plus', 17) ?> Solicitar espacio</button><?php endif; ?></div>
 </section>
 
@@ -206,7 +205,7 @@ require __DIR__ . '/includes/header.php';
 </form>
 
 <?php if (!$requests): ?>
-<section class="empty-state"><div class="empty-icon"><?= icon('building', 30) ?></div><h2>No hay reservas para mostrar</h2><p><?= $isProfessor ? 'Podés iniciar una solicitud para un espacio disponible.' : 'No hay solicitudes pendientes para tus espacios y turnos.' ?></p><?php if ($isProfessor): ?><button class="btn btn-primary" type="button" data-dialog-open="newSpaceRequest">Solicitar espacio</button><?php endif; ?></section>
+<section class="empty-state"><div class="empty-icon"><?= icon('building', 30) ?></div><h2>No hay reservas para mostrar</h2><p><?= $isProfessor ? 'Podés iniciar una solicitud para un espacio disponible.' : 'No hay solicitudes para tus espacios asignados.' ?></p><?php if ($isProfessor): ?><button class="btn btn-primary" type="button" data-dialog-open="newSpaceRequest">Solicitar espacio</button><?php endif; ?></section>
 <?php else: ?>
 <div class="table-wrap"><table id="spacesTable"><thead><tr><th>Espacio</th><th>Fecha y horario</th><?php if ($isManager || $isAssignedManager): ?><th>Solicitante</th><?php endif; ?><th>Turno</th><th>Estado</th><th>Respuesta</th><th>Acciones</th></tr></thead><tbody>
 <?php foreach ($requests as $request): ?>
