@@ -95,7 +95,7 @@ CREATE TABLE cursos (
     activo          TINYINT(1) NOT NULL DEFAULT 1,
     UNIQUE KEY uq_cursos (anio, division, turno, especialidad_id),
     CONSTRAINT fk_cursos_especialidad FOREIGN KEY (especialidad_id)
-        REFERENCES especialidades(id) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES especialidades(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
     CONSTRAINT chk_cursos_especialidad CHECK (
         (anio <= 2 AND especialidad_id IS NULL) OR
         (anio >= 3 AND especialidad_id IS NOT NULL)

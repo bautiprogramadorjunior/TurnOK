@@ -22,14 +22,20 @@ function load_env_file(string $path): void
         $value = trim($value, "\"'");
 
         if ($key !== '' && getenv($key) === false) {
-            putenv($key . '=' . $value);
+            // Algunos hostings (ej. InfinityFree) bloquean putenv(); se usa @ para
+            // evitar el aviso y se guarda igual el valor en un arreglo propio.
+            @putenv($key . '=' . $value);
             $_ENV[$key] = $value;
+            $GLOBALS['__turnok_env'][$key] = $value;
         }
     }
 }
 
 function env_value(string $key, ?string $default = null): ?string
 {
+    if (isset($GLOBALS['__turnok_env'][$key])) {
+        return $GLOBALS['__turnok_env'][$key];
+    }
     $value = getenv($key);
     return $value === false ? $default : $value;
 }
